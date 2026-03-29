@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Dojo — JS & C# Daily Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0f14;
+  --bg2: #13161e;
+  --bg3: #1a1e2a;
+  --surface: #1f2433;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.14);
+  --js: #f7df1e;
+  --js2: #e6c800;
+  --cs: #7b68ee;
+  --cs2: #9a8bf5;
+  --accent: #00d4aa;
+  --accent2: #00b896;
+  --red: #ff6b6b;
+  --green: #51cf66;
+  --text: #e8eaf0;
+  --text2: #8891a8;
+  --text3: #4a5268;
+  --mono: 'Space Mono', monospace;
+  --display: 'Syne', sans-serif;
+  --radius: 12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--display);min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,15,20,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.nav-logo{font-size:17px;font-weight:800;letter-spacing:-0.5px;display:flex;align-items:center;gap:10px}
+.logo-badge{background:var(--accent);color:#000;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.08em}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{padding:6px 14px;border-radius:8px;border:1px solid transparent;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--text2)}
+.nav-tab:hover{color:var(--text);border-color:var(--border2)}
+.nav-tab.active{color:#000;border-color:transparent}
+.nav-tab.active.js-tab{background:var(--js)}
+.nav-tab.active.cs-tab{background:var(--cs);color:#fff}
+.nav-tab.active.quiz-tab{background:var(--accent);color:#000}
+.nav-tab.active.ref-tab{background:var(--surface);color:var(--text);border-color:var(--border2)}
+.streak-badge{font-family:var(--mono);font-size:12px;color:var(--accent);border:1px solid rgba(0,212,170,0.3);padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:6px}
+.streak-dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+/* MAIN */
+.main{margin-top:56px;min-height:calc(100vh - 56px)}
+.page{display:none;padding:40px 24px;max-width:980px;margin:0 auto}
+.page.active{display:block}
+
+/* HERO */
+.hero{text-align:center;padding:60px 0 48px}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;color:var(--accent);margin-bottom:16px;text-transform:uppercase}
+.hero h1{font-size:clamp(36px,6vw,64px);font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:16px}
+.hero h1 .js-word{color:var(--js)}
+.hero h1 .cs-word{color:var(--cs2)}
+.hero p{font-size:16px;color:var(--text2);max-width:520px;margin:0 auto 32px;line-height:1.7;font-weight:400}
+.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-size:32px;font-weight:800;letter-spacing:-1px}
+.stat-lbl{font-size:12px;color:var(--text2);font-family:var(--mono);margin-top:2px}
+
+/* SECTION TITLES */
+.section-title{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px}
+.section-sub{font-size:14px;color:var(--text2);margin-bottom:28px}
+.lang-header{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.lang-pill{font-family:var(--mono);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.06em}
+.lang-pill.js{background:rgba(247,223,30,0.15);color:var(--js);border:1px solid rgba(247,223,30,0.25)}
+.lang-pill.cs{background:rgba(123,104,238,0.15);color:var(--cs2);border:1px solid rgba(123,104,238,0.3)}
+
+/* TOPICS GRID */
+.topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:48px}
+.topic-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.topic-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .2s}
+.topic-card.js-card::before{background:var(--js)}
+.topic-card.cs-card::before{background:var(--cs)}
+.topic-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.topic-card:hover::before{opacity:1}
+.topic-card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.topic-name{font-size:15px;font-weight:700;letter-spacing:-0.2px}
+.topic-num{font-family:var(--mono);font-size:11px;color:var(--text3)}
+.topic-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px;font-weight:400}
+.topic-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+
+/* CODE EXAMPLES */
+.example-section{margin-bottom:40px}
+.example-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px}
+.example-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.example-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.example-dot{width:8px;height:8px;border-radius:50%}
+.example-dot.js{background:var(--js)}
+.example-dot.cs{background:var(--cs)}
+.copy-btn{font-family:var(--mono);font-size:10px;color:var(--text3);background:none;border:1px solid var(--border);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all .15s}
+.copy-btn:hover{color:var(--text);border-color:var(--border2)}
+.code-area{padding:20px;overflow-x:auto}
+pre{font-family:var(--mono);font-size:13px;line-height:1.75;color:#c9d1d9;white-space:pre}
+.kw{color:#ff79c6}
+.str{color:#f1fa8c}
+.cm{color:#6272a4}
+.num{color:#bd93f9}
+.fn{color:#50fa7b}
+.cls{color:#8be9fd}
+.prop{color:#ffb86c}
+.concept-note{background:rgba(0,212,170,0.07);border:1px solid rgba(0,212,170,0.2);border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:13px;line-height:1.65;color:var(--text2);font-weight:400}
+.concept-note strong{color:var(--accent);font-weight:700}
+
+/* QUIZ */
+.quiz-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;align-items:center}
+.quiz-lang-btn{padding:8px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:var(--display);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.quiz-lang-btn:hover{border-color:var(--border2);color:var(--text)}
+.quiz-lang-btn.active-js{background:var(--js);color:#000;border-color:var(--js)}
+.quiz-lang-btn.active-cs{background:var(--cs);color:#fff;border-color:var(--cs)}
+.quiz-progress{flex:1;min-width:120px}
+.progress-track{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;background:var(--accent);transition:width .4s}
+.progress-text{font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:5px}
+
+.question-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px}
+.question-meta{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.q-num{font-family:var(--mono);font-size:11px;color:var(--text3)}
+.q-topic{font-family:var(--mono);font-size:11px;padding:2px 10px;border-radius:20px}
+.q-topic.js{background:rgba(247,223,30,0.1);color:var(--js)}
+.q-topic.cs{background:rgba(123,104,238,0.15);color:var(--cs2)}
+.q-difficulty{font-family:var(--mono);font-size:10px}
+.q-difficulty.easy{color:var(--green)}
+.q-difficulty.medium{color:#ffb347}
+.q-difficulty.hard{color:var(--red)}
+.question-text{font-size:17px;font-weight:700;letter-spacing:-0.3px;margin-bottom:10px;line-height:1.5}
+.question-code{background:var(--bg3);border-radius:8px;padding:14px;margin-bottom:20px;font-family:var(--mono);font-size:12px;line-height:1.7;border:1px solid var(--border)}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+@media(max-width:580px){.options{grid-template-columns:1fr}}
+.option-btn{padding:14px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:var(--display);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;text-align:left;line-height:1.4}
+.option-btn:hover:not(:disabled){border-color:var(--border2);background:var(--surface);transform:translateY(-1px)}
+.option-btn.correct{background:rgba(81,207,102,0.12);border-color:var(--green);color:var(--green)}
+.option-btn.wrong{background:rgba(255,107,107,0.1);border-color:var(--red);color:var(--red)}
+.option-btn:disabled{cursor:default}
+.explanation{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:13px;line-height:1.7;color:var(--text2);font-weight:400;display:none}
+.explanation.show{display:block}
+.explanation strong{color:var(--text)}
+.explanation .exp-code{background:var(--bg);border-radius:6px;padding:10px 14px;margin-top:10px;font-family:var(--mono);font-size:12px;line-height:1.7;border:1px solid var(--border)}
+.quiz-nav{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.nav-btn{padding:10px 24px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:var(--display);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
+.nav-btn:hover{border-color:var(--border2);background:var(--surface)}
+.nav-btn.primary{background:var(--accent);color:#000;border-color:var(--accent)}
+.nav-btn.primary:hover{background:var(--accent2)}
+.nav-btn:disabled{opacity:.35;cursor:default}
+.score-display{font-family:var(--mono);font-size:13px;color:var(--text2)}
+
+/* RESULTS CARD */
+.results-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:40px;text-align:center;margin-bottom:24px}
+.results-score{font-size:64px;font-weight:800;letter-spacing:-3px;margin-bottom:4px}
+.results-label{font-size:14px;color:var(--text2);margin-bottom:20px;font-weight:400}
+.results-bars{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+.results-bar-item{text-align:center}
+.results-bar-num{font-size:22px;font-weight:800}
+.results-bar-lbl{font-size:12px;color:var(--text2);font-family:var(--mono)}
+
+/* CHEATSHEET */
+.cheat-section{margin-bottom:40px}
+.cheat-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.cheat-grid{grid-template-columns:1fr}}
+.cheat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.cheat-card-head{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+.cheat-card pre{padding:14px 16px;font-family:var(--mono);font-size:12px;line-height:1.75;overflow-x:auto}
+
+/* HOME CARDS */
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:40px}
+.home-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.home-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.home-card-icon{font-size:28px;margin-bottom:14px}
+.home-card-title{font-size:16px;font-weight:800;margin-bottom:6px}
+.home-card-desc{font-size:13px;color:var(--text2);line-height:1.6;font-weight:400}
+.home-card-cta{margin-top:16px;font-family:var(--mono);font-size:11px;color:var(--accent)}
+.daily-banner{background:linear-gradient(135deg,rgba(0,212,170,0.08),rgba(123,104,238,0.08));border:1px solid rgba(0,212,170,0.2);border-radius:16px;padding:24px 28px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:gap}
+.daily-banner-left h2{font-size:20px;font-weight:800;margin-bottom:4px}
+.daily-banner-left p{font-size:14px;color:var(--text2);font-weight:400}
+.streak-num{font-size:40px;font-weight:800;color:var(--accent);font-family:var(--mono)}
+.streak-lbl{font-size:12px;color:var(--text2);font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">
+    <span>CODE DOJO</span>
+    <span class="logo-badge">v1.0</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active ref-tab" onclick="showPage('home')">Home</button>
+    <button class="nav-tab js-tab" onclick="showPage('js')">JavaScript</button>
+    <button class="nav-tab cs-tab" onclick="showPage('cs')">C#</button>
+    <button class="nav-tab quiz-tab" onclick="showPage('quiz')">Quiz</button>
+    <button class="nav-tab ref-tab" onclick="showPage('ref')">Cheat Sheet</button>
+  </div>
+  <div class="streak-badge"><div class="streak-dot"></div><span id="streak-display">0 day streak</span></div>
+</nav>
+
+<div class="main">
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-eyebrow">Daily Practice — 100 Questions</div>
+    <h1>Master <span class="js-word">JavaScript</span><br>& <span class="cs-word">C#</span></h1>
+    <p>Structured lessons, code examples, and daily quizzes to take you from beginner to expert — one session at a time.</p>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num" style="color:var(--js)">50</div><div class="stat-lbl">JS Questions</div></div>
+      <div class="stat-item"><div class="stat-num" style="color:var(--cs2)">50</div><div class="stat-lbl">C# Questions</div></div>
+      <div class="stat-item"><div class="stat-num" style="color:var(--accent)">18</div><div class="stat-lbl">Core Topics</div></div>
+      <div class="stat-item"><div class="stat-num" id="home-score">0</div><div class="stat-lbl">Your Score</div></div>
+    </div>
+  </div>
+
+  <div class="daily-banner">
+    <div class="daily-banner-left">
+      <h2>Today's Challenge</h2>
+      <p>Complete 10 questions to keep your streak going</p>
+    </div>
+    <div style="text-align:center">
+      <div class="streak-num" id="home-streak">0</div>
+      <div class="streak-lbl">day streak</div>
+    </div>
+  </div>
+
+  <div class="home-grid">
+    <div class="home-card" onclick="showPage('js')">
+      <div class="home-card-icon">⚡</div>
+      <div class="home-card-title" style="color:var(--js)">JavaScript</div>
+      <div class="home-card-desc">Variables, functions, arrays, DOM, async/await, closures, prototypes, ES6+ features and more.</div>
+      <div class="home-card-cta">9 topics → explore</div>
+    </div>
+    <div class="home-card" onclick="showPage('cs')">
+      <div class="home-card-icon">🔷</div>
+      <div class="home-card-title" style="color:var(--cs2)">C#</div>
+      <div class="home-card-desc">Types, OOP, LINQ, async/await, generics, delegates, interfaces, exception handling and more.</div>
+      <div class="home-card-cta">9 topics → explore</div>
+    </div>
+    <div class="home-card" onclick="startQuiz('js')">
+      <div class="home-card-icon">🎯</div>
+      <div class="home-card-title">JS Quiz</div>
+      <div class="home-card-desc">50 multiple-choice questions with explanations and code examples. Track your score.</div>
+      <div class="home-card-cta">start quiz →</div>
+    </div>
+    <div class="home-card" onclick="startQuiz('cs')">
+      <div class="home-card-icon">🎯</div>
+      <div class="home-card-title">C# Quiz</div>
+      <div class="home-card-desc">50 multiple-choice questions covering OOP, LINQ, delegates, async and more.</div>
+      <div class="home-card-cta">start quiz →</div>
+    </div>
+    <div class="home-card" onclick="showPage('ref')">
+      <div class="home-card-icon">📋</div>
+      <div class="home-card-title">Cheat Sheet</div>
+      <div class="home-card-desc">Side-by-side JS vs C# syntax reference. Perfect when you're switching between the two languages.</div>
+      <div class="home-card-cta">open reference →</div>
+    </div>
+    <div class="home-card" onclick="resetProgress()">
+      <div class="home-card-icon">🔄</div>
+      <div class="home-card-title">Reset Progress</div>
+      <div class="home-card-desc">Clear quiz scores and streak to start fresh. All lessons remain available.</div>
+      <div class="home-card-cta">reset →</div>
+    </div>
+  </div>
+</div>
+
+<!-- JAVASCRIPT LESSONS -->
+<div class="page" id="page-js">
+  <div class="lang-header">
+    <span class="lang-pill js">JavaScript</span>
+    <span class="section-title">Core Concepts with Examples</span>
+  </div>
+
+  <!-- 1. Variables -->
+  <div class="example-section">
+    <div class="section-title">1 — Variables & Data Types</div>
+    <div class="concept-note"><strong>Rule of thumb:</strong> Use <code>const</code> by default. Use <code>let</code> only when you need to reassign. Never use <code>var</code> in modern JS — it has confusing function scope.</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot js"></div>Variables</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="cm">// const — can't be reassigned</span>
+<span class="kw">const</span> name = <span class="str">"Ahmad"</span>;
+<span class="kw">const</span> age  = <span class="num">25</span>;
+<span class="kw">const</span> isActive = <span class="kw">true</span>;
+
+<span class="cm">// let — can be reassigned</span>
+<span class="kw">let</span> score = <span class="num">0</span>;
+score = <span class="num">10</span>;   <span class="cm">// OK</span>
+
+<span class="cm">// Data types</span>
+<span class="kw">const</span> text    = <span class="str">"Hello"</span>;       <span class="cm">// string</span>
+<span class="kw">const</span> count   = <span class="num">42</span>;           <span class="cm">// number</span>
+<span class="kw">const</span> pi      = <span class="num">3.14</span>;         <span class="cm">// number (no float type)</span>
+<span class="kw">const</span> flag    = <span class="kw">false</span>;        <span class="cm">// boolean</span>
+<span class="kw">const</span> nothing = <span class="kw">null</span>;         <span class="cm">// intentional empty</span>
+<span class="kw">let</span>   missing;                 <span class="cm">// undefined — not yet set</span>
+
+<span class="cm">// Template literals (string interpolation)</span>
+<span class="kw">const</span> msg = <span class="str">`Hello, <span class="prop">${name}</span>! You are <span class="prop">${age}</span> years old.`</span>;
+console.<span class="fn">log</span>(msg); <span class="cm">// Hello, Ahmad! You are 25 years old.</span></pre></div>
+    </div>
+  </div>
+
+  <!-- 2. Functions -->
+  <div class="example-section">
+    <div class="section-title">2 — Functions</div>
+    <div class="concept-note"><strong>Three ways to write a function.</strong> Arrow functions are shorter and commonly used in modern JS. They don't have their own <code>this</code> — important for OOP.</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot js"></div>Functions</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="cm">// 1. Function declaration (hoisted — can call before definition)</span>
+<span class="kw">function</span> <span class="fn">greet</span>(name) {
+  <span class="kw">return</span> <span class="str">`Hello, <span class="prop">${name}</span>!`</span>;
+}
+
+<span class="cm">// 2. Function expression</span>
+<span class="kw">const</span> <span class="fn">add</span> = <span class="kw">function</span>(a, b) {
+  <span class="kw">return</span> a + b;
+};
+
+<span class="cm">// 3. Arrow function (most common in modern JS)</span>
+<span class="kw">const</span> <span class="fn">multiply</span> = (a, b) => a * b;   <span class="cm">// implicit return</span>
+
+<span class="kw">const</span> <span class="fn">square</span> = n => n * n;           <span class="cm">// single param, no parens needed</span>
+
+<span class="kw">const</span> <span class="fn">fullName</span> = (first, last) => {   <span class="cm">// multi-line needs { return }</span>
+  <span class="kw">const</span> name = <span class="str">`<span class="prop">${first}</span> <span class="prop">${last}</span>`</span>;
+  <span class="kw">return</span> name.<span class="fn">toUpperCase</span>();
+};
+
+<span class="cm">// Default parameters</span>
+<span class="kw">const</span> <span class="fn">welcome</span> = (name = <span class="str">"Guest"</span>) => <span class="str">`Welcome, <span class="prop">${name}</span>!`</span>;
+console.<span class="fn">log</span>(<span class="fn">welcome</span>());        <span class="cm">// Welcome, Guest!</span>
+console.<span class="fn">log</span>(<span class="fn">welcome</span>(<span class="str">"Sara"</span>)); <span class="cm">// Welcome, Sara!</span></pre></div>
+    </div>
+  </div>
+
+  <!-- 3. Arrays -->
+  <div class="example-section">
+    <div class="section-title">3 — Arrays & Array Methods</div>
+    <div class="concept-note"><strong>The Big Three:</strong> <code>map</code> transforms each item, <code>filter</code> keeps matching items, <code>reduce</code> collapses to one value. These replace most <code>for</code> loops in modern JS.</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot js"></div>Arrays</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="kw">const</span> nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>];
+
+<span class="cm">// map — transform every element, returns NEW array</span>
+<span class="kw">const</span> doubled = nums.<span class="fn">map</span>(n => n * <span class="num">2</span>);      <span class="cm">// [2,4,6,8,10]</span>
+
+<span class="cm">// filter — keep elements that pass the test</span>
+<span class="kw">const</span> evens = nums.<span class="fn">filter</span>(n => n % <span class="num">2</span> === <span class="num">0</span>); <span class="cm">// [2,4]</span>
+
+<span class="cm">// find — returns FIRST match (or undefined)</span>
+<span class="kw">const</span> firstBig = nums.<span class="fn">find</span>(n => n > <span class="num">3</span>);     <span class="cm">// 4</span>
+
+<span class="cm">// reduce — collapse to single value</span>
+<span class="kw">const</span> total = nums.<span class="fn">reduce</span>((acc, n) => acc + n, <span class="num">0</span>); <span class="cm">// 15</span>
+
+<span class="cm">// includes, indexOf</span>
+nums.<span class="fn">includes</span>(<span class="num">3</span>);   <span class="cm">// true</span>
+nums.<span class="fn">indexOf</span>(<span class="num">3</span>);    <span class="cm">// 2</span>
+
+<span class="cm">// spread operator — copy or merge arrays</span>
+<span class="kw">const</span> more = [...nums, <span class="num">6</span>, <span class="num">7</span>];             <span class="cm">// [1,2,3,4,5,6,7]</span>
+
+<span class="cm">// Destructuring</span>
+<span class="kw">const</span> [first, second, ...rest] = nums;
+console.<span class="fn">log</span>(first, second, rest); <span class="cm">// 1  2  [3,4,5]</span></pre></div>
+    </div>
+  </div>
+
+  <!-- 4. Objects -->
+  <div class="example-section">
+    <div class="section-title">4 — Objects</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot js"></div>Objects</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="kw">const</span> user = {
+  name:  <span class="str">"Ahmad"</span>,
+  age:   <span class="num">25</span>,
+  <span class="fn">greet</span>() { <span class="kw">return</span> <span class="str">`Hi, I'm <span class="prop">${this.name}</span>`</span>; }
+};
+
+<span class="cm">// Access</span>
+user.name;         <span class="cm">// "Ahmad"</span>
+user[<span class="str">"age"</span>];       <span class="cm">// 25</span>
+
+<span class="cm">// Destructuring objects</span>
+<span class="kw">const</span> { name, age } = user;
+
+<span class="cm">// Spread — copy/merge objects</span>
+<span class="kw">const</span> updated = { ...user, age: <span class="num">26</span>, city: <span class="str">"KL"</span> };
+
+<span class="cm">// Optional chaining — safe access</span>
+<span class="kw">const</span> city = user?.address?.city;  <span class="cm">// undefined (no error)</span>
+
+<span class="cm">// Nullish coalescing — fallback</span>
+<span class="kw">const</span> display = user.nickname ?? <span class="str">"No nickname"</span>;</pre></div>
+    </div>
+  </div>
+
+  <!-- 5. Classes -->
+  <div class="example-section">
+    <div class="section-title">5 — Classes & OOP</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot js"></div>Classes</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="kw">class</span> <span class="cls">Animal</span> {
+  <span class="cm">// # means private (modern JS)</span>
+  <span class="prop">#name</span>;
+
+  <span class="fn">constructor</span>(name, sound) {
+    <span class="kw">this</span>.<span class="prop">#name</span> = name;
+    <span class="kw">this</span>.sound = sound;
+  }
+
+  <span class="fn">speak</span>() {
+    <span class="kw">return</span> <span class="str">`<span class="prop">${this.#name}</span> says <span class="prop">${this.sound}</span>`</span>;
+  }
+
+  <span class="kw">get</span> <span class="fn">name</span>() { <span class="kw">return</span> <span class="kw">this</span>.<span class="prop">#name</span>; }
+}
+
+<span class="kw">class</span> <span class="cls">Dog</span> <span class="kw">extends</span> <span class="cls">Animal</span> {
+  <span class="fn">constructor</span>(name) {
+    <span class="kw">super</span>(name, <span class="str">"Woof"</span>);  <span class="cm">// call parent constructor</span>
+  }
+
+  <span class="fn">fetch</span>(item) {
+    <span class="kw">return</span> <span class="str">`<span class="prop">${this.name}</span> fetches the <span class="prop">${item}</span>!`</span>;
+  }
+}
+
+<span class="kw">const</span> dog = <span class="kw">new</span> <span class="cls">Dog</span>(<span class="str">"Rex"</span>);
+console.<span class="fn">log</span>(dog.<span class="fn">speak</span>());        <span class="cm">// Rex says Woof</span>
+console.<span class="fn">log</span>(dog.<span class="fn">fetch</span>(<span class="str">"ball"</span>)); <span class="cm">// Rex fetches the ball!</span></pre></div>
+    </div>
+  </div>
+
+  <!-- 6. Async -->
+  <div class="example-section">
+    <div class="section-title">6 — Async / Await & Promises</div>
+    <div class="concept-note"><strong>Golden rule:</strong> Always <code>await</code> inside an <code>async</code> function. Use <code>try/catch</code> to handle errors. <code>async/await</code> is just cleaner syntax on top of Promises.</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot js"></div>Async/Await</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="cm">// Fetch data from an API</span>
+<span class="kw">async function</span> <span class="fn">getUser</span>(id) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`https://api.example.com/users/<span class="prop">${id}</span>`</span>);
+    <span class="kw">if</span> (!response.ok) <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="str">"User not found"</span>);
+    <span class="kw">const</span> user = <span class="kw">await</span> response.<span class="fn">json</span>();
+    <span class="kw">return</span> user;
+  } <span class="kw">catch</span> (error) {
+    console.<span class="fn">error</span>(<span class="str">"Error:"</span>, error.message);
+  }
+}
+
+<span class="cm">// Run multiple requests in parallel (faster!)</span>
+<span class="kw">async function</span> <span class="fn">getMultiple</span>() {
+  <span class="kw">const</span> [user, posts] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+    <span class="fn">fetch</span>(<span class="str">"/api/user"</span>).<span class="fn">then</span>(r => r.<span class="fn">json</span>()),
+    <span class="fn">fetch</span>(<span class="str">"/api/posts"</span>).<span class="fn">then</span>(r => r.<span class="fn">json</span>()),
+  ]);
+  <span class="kw">return</span> { user, posts };
+}</pre></div>
+    </div>
+  </div>
+
+  <!-- 7. DOM -->
+  <div class="example-section">
+    <div class="section-title">7 — DOM Manipulation</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot js"></div>DOM</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="cm">// Select elements</span>
+<span class="kw">const</span> btn  = document.<span class="fn">querySelector</span>(<span class="str">"#myBtn"</span>);
+<span class="kw">const</span> list = document.<span class="fn">querySelector</span>(<span class="str">".item-list"</span>);
+<span class="kw">const</span> all  = document.<span class="fn">querySelectorAll</span>(<span class="str">"li"</span>); <span class="cm">// NodeList</span>
+
+<span class="cm">// Change content and style</span>
+btn.textContent = <span class="str">"Click me!"</span>;
+btn.style.backgroundColor = <span class="str">"blue"</span>;
+btn.classList.<span class="fn">add</span>(<span class="str">"active"</span>);
+btn.classList.<span class="fn">toggle</span>(<span class="str">"hidden"</span>);
+
+<span class="cm">// Create and append elements</span>
+<span class="kw">const</span> li = document.<span class="fn">createElement</span>(<span class="str">"li"</span>);
+li.textContent = <span class="str">"New item"</span>;
+list.<span class="fn">appendChild</span>(li);
+
+<span class="cm">// Events</span>
+btn.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, (e) => {
+  console.<span class="fn">log</span>(<span class="str">"Clicked!"</span>, e.target);
+});
+
+<span class="cm">// Read input value</span>
+<span class="kw">const</span> val = document.<span class="fn">querySelector</span>(<span class="str">"#myInput"</span>).value;</pre></div>
+    </div>
+  </div>
+
+  <!-- 8. Closures -->
+  <div class="example-section">
+    <div class="section-title">8 — Closures & Scope</div>
+    <div class="concept-note"><strong>A closure</strong> is a function that remembers the variables from where it was created, even after that outer function has finished running.</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot js"></div>Closures</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="cm">// Counter factory — each call creates its own count</span>
+<span class="kw">function</span> <span class="fn">makeCounter</span>(start = <span class="num">0</span>) {
+  <span class="kw">let</span> count = start;         <span class="cm">// private to this closure</span>
+  <span class="kw">return</span> {
+    <span class="fn">increment</span>() { <span class="kw">return</span> ++count; },
+    <span class="fn">decrement</span>() { <span class="kw">return</span> --count; },
+    <span class="fn">value</span>()     { <span class="kw">return</span> count; }
+  };
+}
+
+<span class="kw">const</span> c1 = <span class="fn">makeCounter</span>();
+<span class="kw">const</span> c2 = <span class="fn">makeCounter</span>(<span class="num">10</span>);
+
+c1.<span class="fn">increment</span>(); <span class="cm">// 1</span>
+c1.<span class="fn">increment</span>(); <span class="cm">// 2</span>
+c2.<span class="fn">increment</span>(); <span class="cm">// 11 — completely independent</span></pre></div>
+    </div>
+  </div>
+
+  <!-- 9. Error Handling -->
+  <div class="example-section">
+    <div class="section-title">9 — Error Handling</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot js"></div>Try/Catch</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="kw">function</span> <span class="fn">divide</span>(a, b) {
+  <span class="kw">if</span> (b === <span class="num">0</span>) <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="str">"Cannot divide by zero"</span>);
+  <span class="kw">return</span> a / b;
+}
+
+<span class="kw">try</span> {
+  <span class="kw">const</span> result = <span class="fn">divide</span>(<span class="num">10</span>, <span class="num">0</span>);
+  console.<span class="fn">log</span>(result);
+} <span class="kw">catch</span> (err) {
+  console.<span class="fn">error</span>(<span class="str">"Caught:"</span>, err.message);  <span class="cm">// Cannot divide by zero</span>
+} <span class="kw">finally</span> {
+  console.<span class="fn">log</span>(<span class="str">"Always runs"</span>);
+}
+
+<span class="cm">// Custom error type</span>
+<span class="kw">class</span> <span class="cls">ValidationError</span> <span class="kw">extends</span> <span class="cls">Error</span> {
+  <span class="fn">constructor</span>(field, msg) {
+    <span class="kw">super</span>(msg);
+    <span class="kw">this</span>.name = <span class="str">"ValidationError"</span>;
+    <span class="kw">this</span>.field = field;
+  }
+}</pre></div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:32px">
+    <button class="nav-btn primary" onclick="startQuiz('js')">Test your JS knowledge →</button>
+  </div>
+</div>
+
+<!-- C# LESSONS -->
+<div class="page" id="page-cs">
+  <div class="lang-header">
+    <span class="lang-pill cs">C#</span>
+    <span class="section-title">Core Concepts with Examples</span>
+  </div>
+
+  <!-- 1. Variables -->
+  <div class="example-section">
+    <div class="section-title">1 — Variables & Types</div>
+    <div class="concept-note"><strong>C# is statically typed</strong> — you declare the type. Use <code>var</code> to let the compiler infer the type (it's still strongly typed, just shorter to write).</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot cs"></div>Variables & Types</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="cm">// Explicit types</span>
+<span class="kw">string</span>  name    = <span class="str">"Ahmad"</span>;
+<span class="kw">int</span>     age     = <span class="num">25</span>;
+<span class="kw">double</span>  pi      = <span class="num">3.14159</span>;
+<span class="kw">bool</span>    isActive = <span class="kw">true</span>;
+<span class="kw">decimal</span> price   = <span class="num">9.99m</span>;  <span class="cm">// m suffix = decimal literal</span>
+
+<span class="cm">// var — compiler infers the type</span>
+<span class="kw">var</span> city = <span class="str">"Kuala Lumpur"</span>;  <span class="cm">// string</span>
+<span class="kw">var</span> num  = <span class="num">42</span>;              <span class="cm">// int</span>
+
+<span class="cm">// Nullable types — can hold null</span>
+<span class="kw">int</span>? nullableAge = <span class="kw">null</span>;
+<span class="kw">string</span>? middle = <span class="kw">null</span>;
+
+<span class="cm">// String interpolation</span>
+<span class="kw">string</span> msg = <span class="str">$"Hello, {name}! Age: {age}"</span>;
+
+<span class="cm">// Constants</span>
+<span class="kw">const double</span> MaxSpeed = <span class="num">299792458.0</span>;</pre></div>
+    </div>
+  </div>
+
+  <!-- 2. Control Flow -->
+  <div class="example-section">
+    <div class="section-title">2 — Control Flow</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot cs"></div>Control Flow</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="cm">// if / else if / else</span>
+<span class="kw">int</span> score = <span class="num">75</span>;
+<span class="kw">if</span> (score >= <span class="num">90</span>)      Console.<span class="fn">WriteLine</span>(<span class="str">"A"</span>);
+<span class="kw">else if</span> (score >= <span class="num">80</span>) Console.<span class="fn">WriteLine</span>(<span class="str">"B"</span>);
+<span class="kw">else</span>                  Console.<span class="fn">WriteLine</span>(<span class="str">"C"</span>);
+
+<span class="cm">// switch expression (C# 8+)</span>
+<span class="kw">string</span> grade = score <span class="kw">switch</span> {
+  >= <span class="num">90</span> => <span class="str">"A"</span>,
+  >= <span class="num">80</span> => <span class="str">"B"</span>,
+  >= <span class="num">70</span> => <span class="str">"C"</span>,
+  _      => <span class="str">"F"</span>
+};
+
+<span class="cm">// for loop</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">5</span>; i++) Console.<span class="fn">Write</span>(i + <span class="str">" "</span>);
+
+<span class="cm">// foreach</span>
+<span class="kw">var</span> names = <span class="kw">new</span>[] { <span class="str">"Ana"</span>, <span class="str">"Ben"</span>, <span class="str">"Cara"</span> };
+<span class="kw">foreach</span> (<span class="kw">var</span> n <span class="kw">in</span> names) Console.<span class="fn">WriteLine</span>(n);
+
+<span class="cm">// while</span>
+<span class="kw">int</span> x = <span class="num">0</span>;
+<span class="kw">while</span> (x < <span class="num">3</span>) { Console.<span class="fn">WriteLine</span>(x); x++; }</pre></div>
+    </div>
+  </div>
+
+  <!-- 3. Methods -->
+  <div class="example-section">
+    <div class="section-title">3 — Methods</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot cs"></div>Methods</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="cm">// Basic method</span>
+<span class="kw">static string</span> <span class="fn">Greet</span>(<span class="kw">string</span> name) => <span class="str">$"Hello, {name}!"</span>;
+
+<span class="cm">// Optional parameters</span>
+<span class="kw">static string</span> <span class="fn">Welcome</span>(<span class="kw">string</span> name, <span class="kw">string</span> title = <span class="str">"Mr"</span>) =>
+  <span class="str">$"Welcome, {title} {name}"</span>;
+
+<span class="cm">// Named arguments (any order)</span>
+<span class="fn">Welcome</span>(title: <span class="str">"Dr"</span>, name: <span class="str">"Ahmad"</span>);
+
+<span class="cm">// out parameter — return multiple values</span>
+<span class="kw">static bool</span> <span class="fn">TryDivide</span>(<span class="kw">int</span> a, <span class="kw">int</span> b, <span class="kw">out double</span> result) {
+  <span class="kw">if</span> (b == <span class="num">0</span>) { result = <span class="num">0</span>; <span class="kw">return false</span>; }
+  result = (<span class="kw">double</span>)a / b;
+  <span class="kw">return true</span>;
+}
+
+<span class="kw">if</span> (<span class="fn">TryDivide</span>(<span class="num">10</span>, <span class="num">2</span>, <span class="kw">out double</span> r))
+  Console.<span class="fn">WriteLine</span>(<span class="str">$"Result: {r}"</span>); <span class="cm">// 5</span></pre></div>
+    </div>
+  </div>
+
+  <!-- 4. Classes -->
+  <div class="example-section">
+    <div class="section-title">4 — Classes & OOP</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot cs"></div>Classes</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="kw">public class</span> <span class="cls">Animal</span> {
+  <span class="cm">// Auto-properties</span>
+  <span class="kw">public string</span> Name  { <span class="kw">get</span>; }
+  <span class="kw">public string</span> Sound { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+  <span class="kw">public</span> <span class="fn">Animal</span>(<span class="kw">string</span> name, <span class="kw">string</span> sound) {
+    Name  = name;
+    Sound = sound;
+  }
+
+  <span class="kw">public virtual string</span> <span class="fn">Speak</span>() => <span class="str">$"{Name} says {Sound}"</span>;
+}
+
+<span class="kw">public class</span> <span class="cls">Dog</span> : <span class="cls">Animal</span> {
+  <span class="kw">public</span> <span class="fn">Dog</span>(<span class="kw">string</span> name) : <span class="kw">base</span>(name, <span class="str">"Woof"</span>) { }
+
+  <span class="kw">public override string</span> <span class="fn">Speak</span>() =>
+    <span class="str">$"{base.Speak()} (tail wagging)"</span>;
+
+  <span class="kw">public string</span> <span class="fn">Fetch</span>(<span class="kw">string</span> item) =>
+    <span class="str">$"{Name} fetches the {item}!"</span>;
+}
+
+<span class="kw">var</span> dog = <span class="kw">new</span> <span class="cls">Dog</span>(<span class="str">"Rex"</span>);
+Console.<span class="fn">WriteLine</span>(dog.<span class="fn">Speak</span>());       <span class="cm">// Rex says Woof (tail wagging)</span>
+Console.<span class="fn">WriteLine</span>(dog.<span class="fn">Fetch</span>(<span class="str">"ball"</span>)); <span class="cm">// Rex fetches the ball!</span></pre></div>
+    </div>
+  </div>
+
+  <!-- 5. Interfaces -->
+  <div class="example-section">
+    <div class="section-title">5 — Interfaces</div>
+    <div class="concept-note"><strong>Interface = a contract.</strong> Any class that implements it MUST provide those methods. This is how C# achieves loose coupling — you code against the interface, not the implementation.</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot cs"></div>Interfaces</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="kw">public interface</span> <span class="cls">IShape</span> {
+  <span class="kw">double</span> <span class="fn">Area</span>();
+  <span class="kw">double</span> <span class="fn">Perimeter</span>();
+}
+
+<span class="kw">public class</span> <span class="cls">Circle</span> : <span class="cls">IShape</span> {
+  <span class="kw">private double</span> _radius;
+  <span class="kw">public</span> <span class="fn">Circle</span>(<span class="kw">double</span> r) => _radius = r;
+  <span class="kw">public double</span> <span class="fn">Area</span>()      => Math.PI * _radius * _radius;
+  <span class="kw">public double</span> <span class="fn">Perimeter</span>() => <span class="num">2</span> * Math.PI * _radius;
+}
+
+<span class="kw">public class</span> <span class="cls">Square</span> : <span class="cls">IShape</span> {
+  <span class="kw">private double</span> _side;
+  <span class="kw">public</span> <span class="fn">Square</span>(<span class="kw">double</span> s) => _side = s;
+  <span class="kw">public double</span> <span class="fn">Area</span>()      => _side * _side;
+  <span class="kw">public double</span> <span class="fn">Perimeter</span>() => <span class="num">4</span> * _side;
+}
+
+<span class="cm">// Works with ANY IShape — no change needed when adding new shapes</span>
+<span class="kw">static void</span> <span class="fn">PrintInfo</span>(<span class="cls">IShape</span> shape) {
+  Console.<span class="fn">WriteLine</span>(<span class="str">$"Area: {shape.Area():F2}"</span>);
+}</pre></div>
+    </div>
+  </div>
+
+  <!-- 6. LINQ -->
+  <div class="example-section">
+    <div class="section-title">6 — LINQ</div>
+    <div class="concept-note"><strong>LINQ (Language-Integrated Query)</strong> lets you query collections like a database query. It's one of C#'s most powerful features — like JS array methods but far more expressive.</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot cs"></div>LINQ</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="kw">var</span> numbers = <span class="kw">new</span> List&lt;<span class="kw">int</span>&gt; { <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span> };
+
+<span class="cm">// Where = filter</span>
+<span class="kw">var</span> evens = numbers.<span class="fn">Where</span>(n => n % <span class="num">2</span> == <span class="num">0</span>); <span class="cm">// [2,4,6,8]</span>
+
+<span class="cm">// Select = transform (like JS .map)</span>
+<span class="kw">var</span> squared = numbers.<span class="fn">Select</span>(n => n * n);
+
+<span class="cm">// OrderBy, OrderByDescending</span>
+<span class="kw">var</span> sorted = numbers.<span class="fn">OrderByDescending</span>(n => n);
+
+<span class="cm">// First, FirstOrDefault</span>
+<span class="kw">var</span> firstBig = numbers.<span class="fn">FirstOrDefault</span>(n => n > <span class="num">5</span>); <span class="cm">// 6</span>
+
+<span class="cm">// Any, All, Count</span>
+<span class="kw">bool</span> hasEven  = numbers.<span class="fn">Any</span>(n => n % <span class="num">2</span> == <span class="num">0</span>);  <span class="cm">// true</span>
+<span class="kw">bool</span> allPositive = numbers.<span class="fn">All</span>(n => n > <span class="num">0</span>);      <span class="cm">// true</span>
+<span class="kw">int</span>  bigCount = numbers.<span class="fn">Count</span>(n => n > <span class="num">4</span>);       <span class="cm">// 4</span>
+
+<span class="cm">// Sum, Average, Max, Min</span>
+<span class="kw">int</span>    total = numbers.<span class="fn">Sum</span>();       <span class="cm">// 36</span>
+<span class="kw">double</span> avg   = numbers.<span class="fn">Average</span>();  <span class="cm">// 4.5</span>
+
+<span class="cm">// Chaining</span>
+<span class="kw">var</span> result = numbers
+  .<span class="fn">Where</span>(n => n > <span class="num">2</span>)
+  .<span class="fn">Select</span>(n => n * <span class="num">10</span>)
+  .<span class="fn">OrderBy</span>(n => n)
+  .<span class="fn">ToList</span>();  <span class="cm">// [30,40,50,60,70,80]</span></pre></div>
+    </div>
+  </div>
+
+  <!-- 7. Async/Await -->
+  <div class="example-section">
+    <div class="section-title">7 — Async / Await</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot cs"></div>Async/Await</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="kw">using</span> System.Net.Http;
+
+<span class="cm">// async method returns Task or Task&lt;T&gt;</span>
+<span class="kw">public static async</span> Task&lt;<span class="kw">string</span>&gt; <span class="fn">GetDataAsync</span>(<span class="kw">string</span> url) {
+  <span class="kw">using var</span> client = <span class="kw">new</span> <span class="cls">HttpClient</span>();
+  <span class="kw">try</span> {
+    <span class="kw">string</span> response = <span class="kw">await</span> client.<span class="fn">GetStringAsync</span>(url);
+    <span class="kw">return</span> response;
+  }
+  <span class="kw">catch</span> (<span class="cls">HttpRequestException</span> ex) {
+    Console.<span class="fn">WriteLine</span>(<span class="str">$"Error: {ex.Message}"</span>);
+    <span class="kw">return string</span>.Empty;
+  }
+}
+
+<span class="cm">// Run tasks in parallel</span>
+<span class="kw">var</span> (t1, t2) = (<span class="fn">GetDataAsync</span>(<span class="str">"url1"</span>), <span class="fn">GetDataAsync</span>(<span class="str">"url2"</span>));
+<span class="kw">await</span> Task.<span class="fn">WhenAll</span>(t1, t2);
+
+<span class="cm">// Calling from Main (C# 7.1+)</span>
+<span class="kw">static async</span> Task <span class="fn">Main</span>() {
+  <span class="kw">var</span> data = <span class="kw">await</span> <span class="fn">GetDataAsync</span>(<span class="str">"https://api.example.com"</span>);
+  Console.<span class="fn">WriteLine</span>(data);
+}</pre></div>
+    </div>
+  </div>
+
+  <!-- 8. Generics -->
+  <div class="example-section">
+    <div class="section-title">8 — Generics</div>
+    <div class="concept-note"><strong>Generics</strong> let you write code that works with any type. Instead of writing a separate method for int, string, double — write one method with <code>&lt;T&gt;</code>.</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot cs"></div>Generics</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="cm">// Generic method</span>
+<span class="kw">static</span> T <span class="fn">GetFirst</span>&lt;T&gt;(List&lt;T&gt; list) =>
+  list.Count > <span class="num">0</span> ? list[<span class="num">0</span>] : <span class="kw">default</span>;
+
+<span class="fn">GetFirst</span>(<span class="kw">new</span> List&lt;<span class="kw">int</span>&gt; { <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span> });     <span class="cm">// 1</span>
+<span class="fn">GetFirst</span>(<span class="kw">new</span> List&lt;<span class="kw">string</span>&gt; { <span class="str">"a"</span>,<span class="str">"b"</span> }); <span class="cm">// "a"</span>
+
+<span class="cm">// Generic class</span>
+<span class="kw">public class</span> <span class="cls">Box</span>&lt;T&gt; {
+  <span class="kw">private</span> T _value;
+  <span class="kw">public</span> <span class="fn">Box</span>(T value) => _value = value;
+  <span class="kw">public</span> T <span class="fn">Open</span>()      => _value;
+  <span class="kw">public string</span> <span class="fn">Info</span>() => <span class="str">$"Box contains: {_value}"</span>;
+}
+
+<span class="kw">var</span> intBox    = <span class="kw">new</span> <span class="cls">Box</span>&lt;<span class="kw">int</span>&gt;(<span class="num">42</span>);
+<span class="kw">var</span> stringBox = <span class="kw">new</span> <span class="cls">Box</span>&lt;<span class="kw">string</span>&gt;(<span class="str">"hello"</span>);
+Console.<span class="fn">WriteLine</span>(intBox.<span class="fn">Info</span>()); <span class="cm">// Box contains: 42</span></pre></div>
+    </div>
+  </div>
+
+  <!-- 9. Exception Handling -->
+  <div class="example-section">
+    <div class="section-title">9 — Exception Handling</div>
+    <div class="example-block">
+      <div class="example-header"><div class="example-title"><div class="example-dot cs"></div>Exceptions</div><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <div class="code-area"><pre><span class="kw">public static double</span> <span class="fn">Divide</span>(<span class="kw">double</span> a, <span class="kw">double</span> b) {
+  <span class="kw">if</span> (b == <span class="num">0</span>) <span class="kw">throw new</span> <span class="cls">DivideByZeroException</span>(<span class="str">"b cannot be 0"</span>);
+  <span class="kw">return</span> a / b;
+}
+
+<span class="kw">try</span> {
+  <span class="kw">double</span> result = <span class="fn">Divide</span>(<span class="num">10</span>, <span class="num">0</span>);
+}
+<span class="kw">catch</span> (<span class="cls">DivideByZeroException</span> ex) {
+  Console.<span class="fn">WriteLine</span>(<span class="str">$"Math error: {ex.Message}"</span>);
+}
+<span class="kw">catch</span> (<span class="cls">Exception</span> ex) {
+  Console.<span class="fn">WriteLine</span>(<span class="str">$"Unexpected: {ex.Message}"</span>);
+}
+<span class="kw">finally</span> {
+  Console.<span class="fn">WriteLine</span>(<span class="str">"Cleanup done"</span>);
+}
+
+<span class="cm">// Custom exception</span>
+<span class="kw">public class</span> <span class="cls">AgeException</span> : <span class="cls">Exception</span> {
+  <span class="kw">public int</span> ProvidedAge { <span class="kw">get</span>; }
+  <span class="kw">public</span> <span class="fn">AgeException</span>(<span class="kw">int</span> age)
+    : <span class="kw">base</span>(<span class="str">$"Invalid age: {age}"</span>) => ProvidedAge = age;
+}</pre></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:32px">
+    <button class="nav-btn primary" onclick="startQuiz('cs')">Test your C# knowledge →</button>
+  </div>
+</div>
+
+<!-- QUIZ PAGE -->
+<div class="page" id="page-quiz">
+  <div class="section-title" style="margin-bottom:6px">Daily Quiz</div>
+  <div class="section-sub">Answer all 50 questions. Your score is saved.</div>
+  <div class="quiz-controls">
+    <button class="quiz-lang-btn" id="qbtn-js" onclick="startQuiz('js')">JavaScript (50)</button>
+    <button class="quiz-lang-btn" id="qbtn-cs" onclick="startQuiz('cs')">C# (50)</button>
+    <div class="quiz-progress">
+      <div class="progress-track"><div class="progress-fill" id="q-progress-bar" style="width:0%"></div></div>
+      <div class="progress-text" id="q-progress-text">Select a language to start</div>
+    </div>
+    <div class="score-display" id="q-score-display"></div>
+  </div>
+  <div id="quiz-area">
+    <div style="text-align:center;padding:60px 0;color:var(--text2)">Choose JavaScript or C# above to begin your quiz.</div>
+  </div>
+</div>
+
+<!-- CHEAT SHEET -->
+<div class="page" id="page-ref">
+  <div class="section-title">JS vs C# — Side-by-Side Reference</div>
+  <div class="section-sub">Same concept, both languages. Save this page for quick lookup.</div>
+
+  <div class="cheat-section">
+    <div class="section-title" style="font-size:16px;margin-bottom:12px">Variables</div>
+    <div class="cheat-grid">
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot js"></div>JavaScript</div>
+        <pre><span class="kw">const</span> name = <span class="str">"Ahmad"</span>;
+<span class="kw">let</span>   age  = <span class="num">25</span>;
+<span class="kw">const</span> pi   = <span class="num">3.14</span>;</pre>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot cs"></div>C#</div>
+        <pre><span class="kw">string</span> name = <span class="str">"Ahmad"</span>;
+<span class="kw">int</span>    age  = <span class="num">25</span>;
+<span class="kw">double</span> pi   = <span class="num">3.14</span>;</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <div class="section-title" style="font-size:16px;margin-bottom:12px">String Interpolation</div>
+    <div class="cheat-grid">
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot js"></div>JavaScript</div>
+        <pre><span class="kw">const</span> msg = <span class="str">`Hello, <span class="prop">${name}</span>!`</span>;</pre>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot cs"></div>C#</div>
+        <pre><span class="kw">string</span> msg = <span class="str">$"Hello, {name}!"</span>;</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <div class="section-title" style="font-size:16px;margin-bottom:12px">Functions / Methods</div>
+    <div class="cheat-grid">
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot js"></div>JavaScript</div>
+        <pre><span class="kw">const</span> <span class="fn">add</span> = (a, b) => a + b;
+<span class="kw">function</span> <span class="fn">greet</span>(name = <span class="str">"Guest"</span>) {
+  <span class="kw">return</span> <span class="str">`Hi, <span class="prop">${name}</span>`</span>;
+}</pre>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot cs"></div>C#</div>
+        <pre><span class="kw">static int</span> <span class="fn">Add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) => a + b;
+<span class="kw">static string</span> <span class="fn">Greet</span>(
+  <span class="kw">string</span> name = <span class="str">"Guest"</span>) =>
+  <span class="str">$"Hi, {name}"</span>;</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <div class="section-title" style="font-size:16px;margin-bottom:12px">Arrays / Lists</div>
+    <div class="cheat-grid">
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot js"></div>JavaScript</div>
+        <pre><span class="kw">const</span> arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+arr.<span class="fn">push</span>(<span class="num">4</span>);
+arr.<span class="fn">filter</span>(n => n > <span class="num">1</span>);
+arr.<span class="fn">map</span>(n => n * <span class="num">2</span>);</pre>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot cs"></div>C#</div>
+        <pre><span class="kw">var</span> list = <span class="kw">new</span> List&lt;<span class="kw">int</span>&gt; { <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span> };
+list.<span class="fn">Add</span>(<span class="num">4</span>);
+list.<span class="fn">Where</span>(n => n > <span class="num">1</span>);
+list.<span class="fn">Select</span>(n => n * <span class="num">2</span>);</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <div class="section-title" style="font-size:16px;margin-bottom:12px">Async / Await</div>
+    <div class="cheat-grid">
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot js"></div>JavaScript</div>
+        <pre><span class="kw">async function</span> <span class="fn">load</span>() {
+  <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetch</span>(url);
+  <span class="kw">return await</span> data.<span class="fn">json</span>();
+}</pre>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot cs"></div>C#</div>
+        <pre><span class="kw">async</span> Task&lt;<span class="kw">string</span>&gt; <span class="fn">Load</span>() {
+  <span class="kw">var</span> c = <span class="kw">new</span> <span class="cls">HttpClient</span>();
+  <span class="kw">return await</span> c.<span class="fn">GetStringAsync</span>(url);
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <div class="section-title" style="font-size:16px;margin-bottom:12px">Null Safety</div>
+    <div class="cheat-grid">
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot js"></div>JavaScript</div>
+        <pre><span class="cm">// Optional chaining</span>
+user?.address?.city;
+<span class="cm">// Nullish coalescing</span>
+user.name ?? <span class="str">"Guest"</span>;</pre>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot cs"></div>C#</div>
+        <pre><span class="cm">// Null conditional</span>
+user?.Address?.City;
+<span class="cm">// Null coalescing</span>
+user.Name ?? <span class="str">"Guest"</span>;</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <div class="section-title" style="font-size:16px;margin-bottom:12px">Classes</div>
+    <div class="cheat-grid">
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot js"></div>JavaScript</div>
+        <pre><span class="kw">class</span> <span class="cls">Dog</span> <span class="kw">extends</span> <span class="cls">Animal</span> {
+  <span class="fn">constructor</span>(name) {
+    <span class="kw">super</span>(name, <span class="str">"Woof"</span>);
+  }
+  <span class="fn">bark</span>() { <span class="kw">return</span> <span class="str">"Woof!"</span>; }
+}</pre>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-head"><div class="example-dot cs"></div>C#</div>
+        <pre><span class="kw">class</span> <span class="cls">Dog</span> : <span class="cls">Animal</span> {
+  <span class="kw">public</span> <span class="fn">Dog</span>(<span class="kw">string</span> n)
+    : <span class="kw">base</span>(n, <span class="str">"Woof"</span>) { }
+  <span class="kw">public string</span> <span class="fn">Bark</span>() => <span class="str">"Woof!"</span>;
+}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+const jsQuestions = [
+  {topic:"Variables",diff:"easy",q:"What is the output of: console.log(typeof null)?",code:"",opts:["\"null\"","\"undefined\"","\"object\"","\"boolean\""],ans:2,exp:"In JavaScript, <strong>typeof null === 'object'</strong> is a well-known bug from the language's original design. null is not actually an object — it's a primitive — but this quirk was kept for backwards compatibility.",expCode:"console.log(typeof null);      // \"object\" (historic bug)\nconsole.log(null === null);     // true\nconsole.log(typeof undefined);  // \"undefined\""},
+  {topic:"Variables",diff:"easy",q:"Which keyword should you use for a variable you won't reassign?",code:"",opts:["var","let","const","static"],ans:2,exp:"Use <strong>const</strong> for values you won't reassign. It makes your intent clear and prevents accidental mutation. Use <strong>let</strong> only when reassignment is needed. Never use <strong>var</strong> in modern JS — it has confusing function-level scope.",expCode:"const PI = 3.14;     // good\nlet count = 0;       // use when you need to reassign\ncount = 1;           // OK"},
+  {topic:"Variables",diff:"medium",q:"What does the ?? operator do?",code:"const val = user.name ?? \"Guest\";",opts:["Checks if left side is falsy","Returns right side if left is null or undefined","Throws if left is null","Checks strict equality"],ans:1,exp:"The <strong>nullish coalescing operator (??)</strong> returns the right operand only if the left is <strong>null</strong> or <strong>undefined</strong>. Unlike ||, it does NOT trigger for 0, '' or false.",expCode:"console.log(null ?? \"default\");      // \"default\"\nconsole.log(undefined ?? \"default\"); // \"default\"\nconsole.log(0 ?? \"default\");         // 0  (not triggered!)\nconsole.log(\"\" ?? \"default\");        // \"\" (not triggered!)"},
+  {topic:"Functions",diff:"easy",q:"What is an arrow function's key difference from a regular function?",code:"",opts:["It can't return values","It has no 'this' of its own","It can't take parameters","It always runs asynchronously"],ans:1,exp:"Arrow functions <strong>don't have their own 'this'</strong> — they inherit 'this' from the surrounding context. This is useful in callbacks but means they can't be used as constructors or object methods that need 'this'.",expCode:"const obj = {\n  name: 'Ahmad',\n  // Regular function — 'this' is obj\n  greet() { return this.name; },\n  // Arrow — 'this' is outer scope (not obj)\n  greetArrow: () => this?.name // undefined\n};"},
+  {topic:"Functions",diff:"medium",q:"What does this code output?",code:"function greet(name = \"World\") {\n  return `Hello, ${name}!`;\n}\nconsole.log(greet());",opts:["\"Hello, !\"","\"Hello, World!\"","Error","\"Hello, undefined!\""],ans:1,exp:"<strong>Default parameters</strong> are used when no argument is passed (or when undefined is passed). The function uses 'World' as the fallback value.",expCode:"greet();            // \"Hello, World!\"\ngreet(\"Ahmad\");     // \"Hello, Ahmad!\"\ngreet(undefined);   // \"Hello, World!\" (default used)\ngreet(null);        // \"Hello, null!\" (null is NOT undefined)"},
+  {topic:"Arrays",diff:"easy",q:"Which array method returns a new array with transformed elements?",code:"",opts:[".filter()",".map()",".find()",".forEach()"],ans:1,exp:"<strong>.map()</strong> transforms every element and returns a new array of the same length. It never changes the original.",expCode:"const nums = [1, 2, 3];\nconst doubled = nums.map(n => n * 2);  // [2, 4, 6]\nconsole.log(nums);     // [1, 2, 3] — unchanged\nconsole.log(doubled);  // [2, 4, 6]"},
+  {topic:"Arrays",diff:"easy",q:"What does .filter() return when no elements match?",code:"const nums = [1,2,3];\nconst result = nums.filter(n => n > 10);",opts:["null","undefined","[]","throws Error"],ans:2,exp:"<strong>.filter()</strong> always returns an array — an empty array [] when nothing matches. It never returns null or throws.",expCode:"[1,2,3].filter(n => n > 10);  // []\n[1,2,3].filter(n => n > 1);   // [2, 3]"},
+  {topic:"Arrays",diff:"medium",q:"What does this reduce call return?",code:"[1,2,3,4].reduce((acc, n) => acc + n, 0)",opts:["[1,2,3,4]","10","0","NaN"],ans:1,exp:"<strong>.reduce()</strong> collapses the array to a single value. Starting from 0, it adds each element: 0+1=1, 1+2=3, 3+3=6, 6+4=<strong>10</strong>.",expCode:"// acc starts at 0 (the second argument)\n[1,2,3,4].reduce((acc, n) => acc + n, 0);\n// Step 1: acc=0, n=1 → 1\n// Step 2: acc=1, n=2 → 3\n// Step 3: acc=3, n=3 → 6\n// Step 4: acc=6, n=4 → 10"},
+  {topic:"Arrays",diff:"medium",q:"What is the spread operator used for?",code:"const a = [1,2,3];\nconst b = [...a, 4, 5];",opts:["Multiply array elements","Copy or merge arrays without mutation","Sort an array","Flatten nested arrays"],ans:1,exp:"The <strong>spread operator (...)</strong> expands array elements. Used to copy or merge arrays without modifying the originals.",expCode:"const a = [1,2,3];\nconst b = [...a, 4, 5];    // [1,2,3,4,5]\nconst c = [0, ...a, ...b]; // [0,1,2,3,1,2,3,4,5]\nconsole.log(a);            // [1,2,3] — unchanged"},
+  {topic:"Objects",diff:"easy",q:"What does object destructuring do?",code:"const { name, age } = user;",opts:["Creates a copy of user","Deletes name and age from user","Extracts properties into local variables","Merges user with another object"],ans:2,exp:"<strong>Destructuring</strong> extracts properties from an object into individual variables — a shorthand for `const name = user.name; const age = user.age;`.",expCode:"const user = { name: 'Ahmad', age: 25, city: 'KL' };\nconst { name, age } = user;\nconsole.log(name); // 'Ahmad'\nconsole.log(age);  // 25\n// Rename while destructuring:\nconst { name: userName } = user; // userName = 'Ahmad'"},
+  {topic:"Objects",diff:"medium",q:"What does optional chaining (?.) do?",code:"const city = user?.address?.city;",opts:["Throws if user is null","Returns null if user is undefined","Returns undefined safely without throwing","Checks if user is an object"],ans:2,exp:"<strong>Optional chaining (?.)</strong> short-circuits and returns <strong>undefined</strong> if the left side is null or undefined — instead of throwing a TypeError.",expCode:"const user = null;\nconsole.log(user?.address?.city); // undefined (no error!)\n\n// Without optional chaining:\n// console.log(user.address.city); // TypeError!"},
+  {topic:"Classes",diff:"easy",q:"What keyword calls the parent class constructor in JavaScript?",code:"",opts:["parent()","base()","super()","this.parent()"],ans:2,exp:"<strong>super()</strong> calls the parent class constructor. It MUST be called before accessing 'this' in a subclass constructor.",expCode:"class Dog extends Animal {\n  constructor(name) {\n    super(name, 'Woof'); // Must come first\n    this.tricks = [];    // Only after super()\n  }\n}"},
+  {topic:"Classes",diff:"medium",q:"What does the # prefix on a class field mean?",code:"class Counter {\n  #count = 0;\n}",opts:["It's a comment","It's a static field","It's a private field","It's a constant"],ans:2,exp:"The <strong>#</strong> prefix declares a <strong>private class field</strong> (ES2022). It can only be accessed inside the class — not from outside, not from subclasses.",expCode:"class Counter {\n  #count = 0;\n  increment() { this.#count++; }\n  get value() { return this.#count; }\n}\nconst c = new Counter();\nc.increment();\nconsole.log(c.value);  // 1\nconsole.log(c.#count); // SyntaxError!"},
+  {topic:"Async",diff:"easy",q:"What does 'async' before a function do?",code:"",opts:["Makes the function run in a separate thread","Makes the function always return a Promise","Makes all code inside run in parallel","Prevents errors from being thrown"],ans:1,exp:"An <strong>async function</strong> always returns a Promise — even if you return a plain value, it's automatically wrapped in Promise.resolve(). This is what allows using 'await' inside it.",expCode:"async function getValue() {\n  return 42; // automatically wrapped in Promise.resolve(42)\n}\ngetValue().then(v => console.log(v)); // 42"},
+  {topic:"Async",diff:"medium",q:"What is the purpose of try/catch with async/await?",code:"",opts:["To make the code run faster","To catch rejected Promises (errors)","To make multiple requests parallel","To convert Promises to sync code"],ans:1,exp:"Without try/catch, a rejected Promise in an async function becomes an unhandled rejection. <strong>try/catch</strong> lets you handle errors from awaited Promises the same way you'd handle sync errors.",expCode:"async function load() {\n  try {\n    const data = await fetch('/api/data');\n    if (!data.ok) throw new Error('Failed');\n    return await data.json();\n  } catch (err) {\n    console.error('Error:', err.message);\n    return null; // safe fallback\n  }\n}"},
+  {topic:"Async",diff:"hard",q:"What does Promise.all() do differently from awaiting sequentially?",code:"// A: sequential\nconst a = await fn1();\nconst b = await fn2();\n// B: parallel\nconst [a,b] = await Promise.all([fn1(),fn2()]);",opts:["A is faster","B runs both at the same time — faster","They are identical","B waits for the first to finish"],ans:1,exp:"<strong>Promise.all()</strong> fires all Promises simultaneously and waits for all to resolve. Sequential awaits fire one-by-one — total time = sum of all. Parallel total time = slowest one.",expCode:"// If fn1 takes 1s and fn2 takes 2s:\n// Sequential: 1s + 2s = 3s total\n// Promise.all: max(1s, 2s) = 2s total\n// Promise.all fails if ANY promise rejects"},
+  {topic:"Scope",diff:"medium",q:"What is a closure?",code:"",opts:["A function that closes the program","A function that remembers its outer scope's variables","A private class method","A way to block variable reassignment"],ans:1,exp:"A <strong>closure</strong> is a function that retains access to variables from its outer (enclosing) scope, even after that outer function has finished executing.",expCode:"function makeAdder(x) {\n  return (y) => x + y; // 'x' is remembered (closure)\n}\nconst add5 = makeAdder(5);\nconsole.log(add5(3));  // 8\nconsole.log(add5(10)); // 15"},
+  {topic:"DOM",diff:"easy",q:"Which method selects a single element by CSS selector?",code:"",opts:["getElementById()","querySelector()","getElementsByClass()","findElement()"],ans:1,exp:"<strong>document.querySelector()</strong> accepts any valid CSS selector and returns the first matching element (or null). It's the most flexible selector method.",expCode:"document.querySelector('#myId');       // by ID\ndocument.querySelector('.myClass');    // by class\ndocument.querySelector('div > p');     // by CSS selector\ndocument.querySelectorAll('li');       // all matches (NodeList)"},
+  {topic:"DOM",diff:"medium",q:"What is event delegation?",code:"",opts:["Adding events to every list item","Adding one event listener to a parent to handle child events","Removing event listeners","Using setTimeout for events"],ans:1,exp:"<strong>Event delegation</strong> uses a single listener on a parent, leveraging event bubbling. It's more efficient than adding individual listeners to every child — especially for dynamic elements.",expCode:"// Instead of: items.forEach(i => i.addEventListener('click',...))\n// Use delegation:\ndocument.querySelector('#list').addEventListener('click', (e) => {\n  if (e.target.matches('li')) {\n    console.log('Clicked:', e.target.textContent);\n  }\n});"},
+  {topic:"Types",diff:"hard",q:"What is the output?",code:"console.log(0.1 + 0.2 === 0.3);",opts:["true","false","NaN","TypeError"],ans:1,exp:"Due to <strong>floating point precision</strong>, 0.1 + 0.2 = 0.30000000000000004 in binary floating point — not exactly 0.3. This is not a JS bug — it affects all languages using IEEE 754.",expCode:"console.log(0.1 + 0.2);          // 0.30000000000000004\nconsole.log(0.1 + 0.2 === 0.3);  // false!\n// Fix: use toFixed or compare with epsilon\nconsole.log(Math.abs(0.1+0.2-0.3) < Number.EPSILON); // true"},
+  {topic:"Arrays",diff:"hard",q:"What does Array.from() do?",code:"Array.from('hello')",opts:["Creates an array of 5 undefined values","Creates ['h','e','l','l','o']","Converts a string to a number array","Throws TypeError"],ans:1,exp:"<strong>Array.from()</strong> creates an array from any iterable (strings, Sets, Maps, NodeLists). Iterating a string gives each character.",expCode:"Array.from('hello');              // ['h','e','l','l','o']\nArray.from({length:3}, (_,i) => i); // [0,1,2]\nArray.from(new Set([1,1,2,3]));   // [1,2,3]"},
+  {topic:"Modern JS",diff:"medium",q:"What does destructuring with rest (...) do?",code:"const [first, ...rest] = [1,2,3,4];",opts:["Copies the whole array","Puts first=1 and rest=[2,3,4]","Spreads rest into first","Throws a SyntaxError"],ans:1,exp:"<strong>Rest syntax (...)</strong> in destructuring collects the remaining elements into a new array. 'first' gets 1, and 'rest' gets [2,3,4].",expCode:"const [a, b, ...others] = [1,2,3,4,5];\nconsole.log(a);      // 1\nconsole.log(b);      // 2\nconsole.log(others); // [3,4,5]"},
+  {topic:"Modern JS",diff:"medium",q:"What is a Symbol used for?",code:"",opts:["Encoding strings to binary","Creating unique identifiers that never clash","Defining private classes","Mathematical operations"],ans:1,exp:"<strong>Symbol</strong> creates a completely unique value. Even Symbol('x') !== Symbol('x'). They're used for unique object property keys, often in library code to avoid property name collisions.",expCode:"const id1 = Symbol('id');\nconst id2 = Symbol('id');\nconsole.log(id1 === id2); // false — always unique\n\nconst obj = { [id1]: 42 }; // Symbol as object key\nconsole.log(obj[id1]);     // 42"},
+  {topic:"Modern JS",diff:"hard",q:"What is a Generator function?",code:"function* counter() {\n  yield 1;\n  yield 2;\n  yield 3;\n}",opts:["A function that runs once and stops","A function that can be paused and resumed","A function that generates random numbers","A shorthand for async functions"],ans:1,exp:"A <strong>Generator function</strong> (function*) can pause execution at each 'yield' and resume later. Calling .next() runs until the next yield.",expCode:"function* counter() {\n  yield 1;\n  yield 2;\n  yield 3;\n}\nconst gen = counter();\nconsole.log(gen.next()); // {value:1, done:false}\nconsole.log(gen.next()); // {value:2, done:false}\nconsole.log(gen.next()); // {value:3, done:false}\nconsole.log(gen.next()); // {value:undefined, done:true}"},
+  {topic:"Scope",diff:"hard",q:"What is hoisting?",code:"",opts:["Moving code to the top of the file","Function and var declarations being moved to top of scope","Async code running first","A type of event bubbling"],ans:1,exp:"<strong>Hoisting</strong> means JS moves function declarations and 'var' declarations to the top of their scope before execution. Functions are fully hoisted; 'var' is hoisted but initialised as undefined.",expCode:"// Works — function declaration is hoisted\nconsole.log(greet()); // 'hello'\nfunction greet() { return 'hello'; }\n\n// Doesn't work — let/const NOT hoisted\n// console.log(x); // ReferenceError\nconst x = 5;"},
+  {topic:"Types",diff:"medium",q:"What is the difference between == and ===?",code:"",opts:["No difference","== compares value only; === compares value AND type","=== is slower","== is only for strings"],ans:1,exp:"<strong>===</strong> (strict equality) checks both value and type — no type coercion. <strong>==</strong> (loose equality) coerces types, which can cause surprising results. Always use ===.",expCode:"1 == '1';   // true  (type coercion!)\n1 === '1';  // false (different types)\n0 == false; // true  (coercion)\n0 === false;// false\nnull == undefined;  // true\nnull === undefined; // false"},
+  {topic:"Objects",diff:"hard",q:"What does Object.freeze() do?",code:"",opts:["Copies an object deeply","Prevents adding/modifying/deleting properties","Makes the object async","Converts to JSON"],ans:1,exp:"<strong>Object.freeze()</strong> makes an object immutable — no properties can be added, changed, or deleted. Note: it's shallow — nested objects are NOT frozen.",expCode:"const obj = Object.freeze({ x: 1, y: 2 });\nobj.x = 99;    // silently fails (throws in strict mode)\nobj.z = 3;     // silently fails\nconsole.log(obj); // { x: 1, y: 2 } — unchanged\n\n// Shallow! Nested objects can still be mutated:\nconst deep = Object.freeze({ inner: { val: 1 } });\ndeep.inner.val = 99; // Works! inner is not frozen."},
+  {topic:"Modern JS",diff:"medium",q:"What is the purpose of Map vs plain object {}?",code:"",opts:["Map is faster for arrays","Map allows any type as key, not just strings","Map is only for numbers","They are identical"],ans:1,exp:"A <strong>Map</strong> can use any value as a key (objects, functions, numbers), preserves insertion order, and has a built-in .size property. A plain object coerces all keys to strings.",expCode:"const map = new Map();\nmap.set('name', 'Ahmad');\nmap.set(42, 'the answer');     // number key!\nmap.set({id: 1}, 'an object'); // object key!\nconsole.log(map.size); // 3\nmap.has('name');       // true"},
+  {topic:"Modern JS",diff:"medium",q:"What does Set do differently from an array?",code:"",opts:["Sets are sorted automatically","Sets only store unique values","Sets can only hold numbers","Sets are faster than arrays always"],ans:1,exp:"A <strong>Set</strong> automatically removes duplicates — each value can only appear once. Great for deduplication.",expCode:"const s = new Set([1, 2, 2, 3, 3, 3]);\nconsole.log([...s]); // [1, 2, 3] — duplicates removed\n\n// Deduplicate an array:\nconst arr = [1,1,2,3,3];\nconst unique = [...new Set(arr)]; // [1,2,3]"},
+  {topic:"Functions",diff:"hard",q:"What is the 'arguments' object?",code:"",opts:["An array of all function parameters","Available in regular functions, holds all passed arguments","A property of arrow functions","An ES6 feature"],ans:1,exp:"The <strong>arguments</strong> object is an array-like object available inside regular functions containing all passed arguments. Arrow functions do NOT have 'arguments'. Prefer rest params (...args) in modern code.",expCode:"function sum() {\n  let total = 0;\n  for (const n of arguments) total += n;\n  return total;\n}\nsum(1, 2, 3); // 6 — works even though no params declared!\n\n// Modern equivalent with rest:\nconst sumRest = (...args) => args.reduce((a,n) => a+n, 0);"},
+  {topic:"Types",diff:"hard",q:"What will this output?",code:"console.log([] + []);",opts:["[]","\"\"","0","null"],ans:1,exp:"<strong>[] + []</strong>: both arrays coerce to empty strings, so the result is empty string + empty string = ''. This is one of JS's quirky type coercion cases.",expCode:"console.log([] + []);   // \"\"\nconsole.log([] + {});   // \"[object Object]\"\nconsole.log({} + []);   // 0 (if in expression context)\n// Lesson: avoid + with non-primitives in JS"},
+  {topic:"Async",diff:"hard",q:"What does async/await compile to under the hood?",code:"",opts:["Threads","setTimeout chains","Promises and .then() chains","Synchronous callbacks"],ans:1,exp:"<strong>async/await</strong> is syntactic sugar over Promises. The JS engine transforms async functions into state machines using Promise chains under the hood.",expCode:"// These two are equivalent:\nasync function load() {\n  const data = await fetch(url);\n  return data.json();\n}\n// Same as:\nfunction load() {\n  return fetch(url).then(data => data.json());\n}"},
+  {topic:"DOM",diff:"hard",q:"What is event bubbling?",code:"",opts:["Events firing too fast","Events propagating from child up to parent elements","Events firing in reverse order","An error in event listeners"],ans:1,exp:"<strong>Event bubbling</strong> means when an event fires on an element, it then propagates up through all its ancestors. A click on a button also 'bubbles up' to the div, body, and document.",expCode:"// Clicking the button fires events in this order:\n// button → div → body → document\ndiv.addEventListener('click', () => console.log('div'));\nbutton.addEventListener('click', (e) => {\n  console.log('button');\n  e.stopPropagation(); // prevent bubbling up\n});"},
+  {topic:"Modern JS",diff:"easy",q:"What is the purpose of the for...of loop?",code:"",opts:["Loop over object keys","Loop over iterable values (arrays, strings, maps)","Loop a fixed number of times","Loop over object values by index"],ans:1,exp:"<strong>for...of</strong> iterates over the values of any iterable (arrays, strings, Maps, Sets, generators). Use for...in for object keys.",expCode:"for (const n of [1,2,3]) console.log(n); // 1 2 3\nfor (const ch of 'hello') console.log(ch); // h e l l o\n\n// vs for...in (object keys):\nconst obj = {a:1,b:2};\nfor (const key in obj) console.log(key); // 'a' 'b'"},
+  {topic:"Functions",diff:"medium",q:"What is a higher-order function?",code:"",opts:["A function with many parameters","A function that takes or returns another function","A function in a class","An async function"],ans:1,exp:"A <strong>higher-order function</strong> either takes a function as an argument or returns a function. map, filter, and reduce are all higher-order functions.",expCode:"// Takes a function:\n[1,2,3].map(n => n * 2); // map is higher-order\n\n// Returns a function:\nfunction multiplier(x) {\n  return (n) => n * x; // returns a function\n}\nconst triple = multiplier(3);\ntriple(5); // 15"},
+  {topic:"Types",diff:"medium",q:"What is NaN and how do you check for it?",code:"",opts:["null for numbers","Not-a-Number; check with isNaN()","An error type","Zero in disguise"],ans:1,exp:"<strong>NaN</strong> (Not a Number) results from invalid math. Its weird property: NaN !== NaN. Use Number.isNaN() (not the global isNaN which coerces) to check.",expCode:"console.log(0 / 0);          // NaN\nconsole.log('abc' * 2);      // NaN\nconsole.log(NaN === NaN);    // false! (unique quirk)\nconsole.log(Number.isNaN(NaN)); // true (correct check)\nconsole.log(isNaN('hello'));    // true (coerces first — avoid)"},
+  {topic:"Objects",diff:"medium",q:"What does Object.assign() do?",code:"const result = Object.assign({}, obj1, obj2);",opts:["Deep copies obj1 and obj2","Copies own enumerable properties from sources to target","Merges objects with deep nesting","Freezes the resulting object"],ans:1,exp:"<strong>Object.assign(target, ...sources)</strong> copies properties from sources into target. Using {} as target makes a shallow copy without mutating originals.",expCode:"const a = { x: 1 };\nconst b = { y: 2 };\nconst c = Object.assign({}, a, b); // { x:1, y:2 }\nconsole.log(a); // { x:1 } — unchanged\n\n// Modern spread equivalent:\nconst d = { ...a, ...b }; // same result"},
+  {topic:"Scope",diff:"easy",q:"What is the difference between var and let scope?",code:"",opts:["No difference","var is function-scoped; let is block-scoped","let is faster","var is newer than let"],ans:1,exp:"<strong>var</strong> is function-scoped — it leaks out of if/for blocks. <strong>let</strong> is block-scoped — contained within the {} where it's declared.",expCode:"// var leaks out of blocks:\nif (true) { var x = 1; }\nconsole.log(x); // 1 (leaked!)\n\n// let is contained:\nif (true) { let y = 1; }\nconsole.log(y); // ReferenceError (block scoped)"},
+  {topic:"Async",diff:"medium",q:"What does Promise.allSettled() do?",code:"",opts:["Same as Promise.all()","Waits for all promises and returns results whether resolved or rejected","Stops if any promise rejects","Only resolves if all reject"],ans:1,exp:"<strong>Promise.allSettled()</strong> waits for ALL promises to finish — resolved or rejected — and returns an array with the status and value/reason of each. Unlike Promise.all(), it never short-circuits.",expCode:"const results = await Promise.allSettled([\n  Promise.resolve('ok'),\n  Promise.reject('error'),\n  Promise.resolve('also ok')\n]);\n// [{status:'fulfilled',value:'ok'},\n//  {status:'rejected', reason:'error'},\n//  {status:'fulfilled',value:'also ok'}]"},
+  {topic:"DOM",diff:"medium",q:"What does e.preventDefault() do?",code:"",opts:["Stops event bubbling","Prevents the default browser action","Removes the event listener","Cancels async operations"],ans:1,exp:"<strong>e.preventDefault()</strong> stops the browser's built-in behaviour — such as form submission, link navigation, or right-click menu — without stopping event propagation.",expCode:"// Prevent form submission:\nform.addEventListener('submit', (e) => {\n  e.preventDefault(); // page won't reload\n  // handle form data manually\n});\n\n// Prevent link navigation:\nlink.addEventListener('click', (e) => {\n  e.preventDefault();\n  // do something instead\n});"},
+  {topic:"Modern JS",diff:"hard",q:"What is a Proxy object?",code:"",opts:["A copy of an object","An object that intercepts operations on another object","A cached version of a function","A type of Promise"],ans:1,exp:"A <strong>Proxy</strong> wraps an object and intercepts fundamental operations (get, set, delete, etc.) via 'traps'. Used in reactivity systems (like Vue 3).",expCode:"const handler = {\n  get(target, key) {\n    console.log(`Getting ${key}`);\n    return target[key];\n  }\n};\nconst obj = new Proxy({ x: 1 }, handler);\nconsole.log(obj.x); // logs 'Getting x', then 1"},
+  {topic:"Types",diff:"easy",q:"What type is returned by typeof []?",code:"",opts:["\"array\"","\"object\"","\"list\"","\"undefined\""],ans:1,exp:"Arrays are objects in JavaScript, so <strong>typeof []</strong> returns 'object'. To check for an array specifically, use Array.isArray().",expCode:"typeof [];              // \"object\"\ntypeof {};              // \"object\"\ntypeof null;            // \"object\"\nArray.isArray([]);      // true  — correct check\nArray.isArray({});      // false"},
+  {topic:"Functions",diff:"hard",q:"What is memoization?",code:"",opts:["Clearing function cache","Caching function results to avoid recalculating","Making functions recursive","A way to make async code faster"],ans:1,exp:"<strong>Memoization</strong> caches the result of a function call. If the function is called again with the same arguments, the cached result is returned immediately — no recalculation.",expCode:"function memoize(fn) {\n  const cache = {};\n  return (...args) => {\n    const key = JSON.stringify(args);\n    if (key in cache) return cache[key];\n    return (cache[key] = fn(...args));\n  };\n}\nconst slowDouble = (n) => { /* expensive work */ return n*2; };\nconst fastDouble = memoize(slowDouble);\nfastDouble(5); // calculates: 10\nfastDouble(5); // from cache: 10 (instant)"},
+  {topic:"Modern JS",diff:"medium",q:"What does the 'in' operator check?",code:"console.log('name' in user);",opts:["If user is inside name","If 'name' exists as a property in user","If user has the value 'name'","If name equals user"],ans:1,exp:"The <strong>in</strong> operator checks if a property exists on an object (including inherited properties). Returns a boolean.",expCode:"const user = { name: 'Ahmad', age: 25 };\nconsole.log('name' in user); // true\nconsole.log('city' in user); // false\nconsole.log('toString' in user); // true (inherited)"},
+  {topic:"Scope",diff:"medium",q:"What is the Temporal Dead Zone (TDZ)?",code:"",opts:["A delay in async code","The period where let/const exist in scope but aren't accessible yet","A garbage collection phase","The time before a Promise resolves"],ans:1,exp:"The <strong>Temporal Dead Zone</strong> is the period between the start of a block scope and a let/const declaration. The variable exists (it's hoisted) but accessing it throws a ReferenceError.",expCode:"// TDZ — throws ReferenceError:\nconsole.log(x); // ReferenceError\nlet x = 5;\n\n// var doesn't have TDZ (just undefined):\nconsole.log(y); // undefined (no error)\nvar y = 5;"},
+  {topic:"Modern JS",diff:"easy",q:"What does JSON.stringify() do?",code:"",opts:["Parses a JSON string to an object","Converts an object to a JSON string","Copies an object","Validates JSON format"],ans:1,exp:"<strong>JSON.stringify()</strong> converts a JavaScript value to a JSON string. The reverse is JSON.parse() which converts JSON string back to a value.",expCode:"const user = { name: 'Ahmad', age: 25 };\nconst json = JSON.stringify(user);\nconsole.log(json); // '{\"name\":\"Ahmad\",\"age\":25}'\n\n// Reverse:\nconst back = JSON.parse(json);\nconsole.log(back.name); // 'Ahmad'"},
+  {topic:"Classes",diff:"hard",q:"What is the prototype chain?",code:"",opts:["A list of parent classes","The mechanism JS uses to look up inherited properties and methods","A chain of Promises","A series of class decorators"],ans:1,exp:"The <strong>prototype chain</strong> is how JS implements inheritance. When you access a property, JS first checks the object itself, then its prototype, then the prototype's prototype, up to Object.prototype.",expCode:"class Animal { speak() { return 'sound'; } }\nclass Dog extends Animal { bark() { return 'woof'; } }\n\nconst d = new Dog();\nd.bark();   // Found on Dog.prototype\nd.speak();  // Found on Animal.prototype (up the chain)\nd.toString(); // Found on Object.prototype (top of chain)"},
+  {topic:"Async",diff:"easy",q:"What does 'await' pause?",code:"",opts:["The entire program","Only the current async function","All pending Promises","The browser's rendering"],ans:1,exp:"<strong>await</strong> pauses only the current async function — not the entire program. Other code (event handlers, timers) continues running while waiting for the Promise to resolve.",expCode:"async function main() {\n  console.log('start');\n  await new Promise(r => setTimeout(r, 1000));\n  console.log('after 1 second');\n}\nmain();\nconsole.log('this runs immediately'); // not blocked!"},
+  {topic:"Types",diff:"hard",q:"What is the difference between deep copy and shallow copy?",code:"",opts:["Shallow is faster, deep is slower (same result)","Shallow copies top-level only; deep copies all nested levels","Deep copy only copies primitives","No difference"],ans:1,exp:"A <strong>shallow copy</strong> copies top-level properties but nested objects/arrays are still shared references. A <strong>deep copy</strong> clones everything recursively — no shared references.",expCode:"const orig = { a: 1, inner: { b: 2 } };\n\n// Shallow (spread):\nconst shallow = { ...orig };\nshallow.inner.b = 99;      // also changes orig.inner.b!\n\n// Deep (structuredClone — modern):\nconst deep = structuredClone(orig);\ndeep.inner.b = 99;          // orig.inner.b still 2"}
+];
+
+const csQuestions = [
+  {topic:"Variables",diff:"easy",q:"Which C# keyword infers the variable type automatically?",code:"",opts:["auto","dynamic","var","type"],ans:2,exp:"<strong>var</strong> lets the compiler infer the type from the right-hand side. It's still strongly typed — you just don't have to write the type explicitly.",expCode:"var name = \"Ahmad\";  // inferred as string\nvar age  = 25;       // inferred as int\nvar pi   = 3.14;     // inferred as double\n// var is NOT dynamic — the type is fixed at compile time"},
+  {topic:"Variables",diff:"easy",q:"What suffix is used for a decimal literal in C#?",code:"decimal price = 9.99;",opts:["d","f","m","l"],ans:2,exp:"The <strong>m</strong> suffix marks a decimal literal. Without it, 9.99 is treated as a double and the compiler throws an error when assigning to decimal.",expCode:"decimal price = 9.99m;   // correct\ndouble  rate  = 3.14;    // double (no suffix)\nfloat   x     = 3.14f;  // float\nlong    big   = 100L;   // long"},
+  {topic:"Variables",diff:"medium",q:"What does int? mean in C#?",code:"int? age = null;",opts:["An array of int","A nullable int that can hold null","A pointer to int","An optional parameter"],ans:1,exp:"The <strong>?</strong> suffix creates a <strong>nullable value type</strong>. Value types (int, bool, double) normally can't be null — adding ? makes them nullable using Nullable<T> under the hood.",expCode:"int  a = null;   // Compile error!\nint? b = null;   // OK\nint? c = 42;     // Also OK\n\nbool hasValue = b.HasValue;  // false\nint  safeVal  = b ?? 0;      // 0 (fallback)"},
+  {topic:"Control Flow",diff:"easy",q:"What is the C# switch expression (C# 8+)?",code:"",opts:["A replacement for if/else","A concise switch that returns a value without break statements","A loop construct","A ternary operator"],ans:1,exp:"The <strong>switch expression</strong> (C# 8+) is a concise form that returns a value directly. No 'case:', no 'break', just pattern => result. The _ is the default case.",expCode:"string grade = score switch {\n  >= 90 => \"A\",\n  >= 80 => \"B\",\n  >= 70 => \"C\",\n  _      => \"F\"  // _ = default\n};"},
+  {topic:"Control Flow",diff:"medium",q:"What is the difference between break and continue in a loop?",code:"",opts:["They are identical","break exits the loop; continue skips to next iteration","continue exits the loop; break skips","break is only for switch"],ans:1,exp:"<strong>break</strong> exits the entire loop immediately. <strong>continue</strong> skips the rest of the current iteration and moves to the next one.",expCode:"for (int i = 0; i < 5; i++) {\n  if (i == 2) continue; // skip 2\n  if (i == 4) break;    // stop at 4\n  Console.Write(i + \" \");\n}\n// Output: 0 1 3"},
+  {topic:"OOP",diff:"easy",q:"What does 'virtual' mean on a method?",code:"public virtual string Speak() { ... }",opts:["The method can't be overridden","The method can be overridden by a subclass","The method runs async","The method is static"],ans:1,exp:"<strong>virtual</strong> marks a method as overridable. Subclasses can use 'override' to provide their own implementation. Without virtual, override is not allowed.",expCode:"class Animal {\n  public virtual string Speak() => \"...\"; \n}\nclass Dog : Animal {\n  public override string Speak() => \"Woof!\"; // allowed\n}\nclass Cat : Animal {\n  public override string Speak() => \"Meow!\"; // allowed\n}"},
+  {topic:"OOP",diff:"easy",q:"What is the purpose of 'base' keyword?",code:"",opts:["Access static members","Access the parent class constructor or method","Create a base object","Mark a method as abstract"],ans:1,exp:"<strong>base</strong> refers to the parent class. Used in constructors to call the parent constructor (base(...)), or in methods to call the parent's implementation (base.Method()).",expCode:"class Dog : Animal {\n  public Dog(string name) : base(name, \"Woof\") { }\n  // ↑ calls Animal's constructor with two args\n\n  public override string Speak() =>\n    base.Speak() + \" (happily)\"; // calls Animal.Speak\n}"},
+  {topic:"OOP",diff:"medium",q:"What is an abstract class?",code:"",opts:["A class with no methods","A class that can't be instantiated and may have abstract methods","A class with only static members","A sealed class"],ans:1,exp:"An <strong>abstract class</strong> cannot be instantiated directly — it's a base template. It can have abstract methods (no body, subclasses must implement) and regular methods.",expCode:"abstract class Shape {\n  public abstract double Area(); // no body\n  public void Print() => Console.WriteLine($\"Area: {Area()}\");\n}\n\nclass Circle : Shape {\n  double r;\n  public Circle(double r) => this.r = r;\n  public override double Area() => Math.PI * r * r;\n}\n// new Shape(); // Compile error!\nnew Circle(5).Print(); // OK"},
+  {topic:"OOP",diff:"medium",q:"What does 'sealed' do to a class?",code:"public sealed class FinalClass { }",opts:["Makes all members private","Prevents the class from being inherited","Makes the class static","Prevents instantiation"],ans:1,exp:"A <strong>sealed</strong> class cannot be inherited. It's the opposite of abstract. String is a well-known sealed class. Use it when you don't want your class to be subclassed.",expCode:"sealed class MyClass { }\n// class Child : MyClass { } // Compile error!\nnew MyClass(); // instantiation is fine"},
+  {topic:"OOP",diff:"medium",q:"What is a property in C# vs a field?",code:"public string Name { get; set; }",opts:["They are identical","A property uses get/set accessors; a field is a plain variable","A field has get/set; a property is a variable","Properties are always private"],ans:1,exp:"A <strong>field</strong> is a plain variable. A <strong>property</strong> wraps a field with get/set accessors, allowing logic (validation, lazy loading) and better encapsulation.",expCode:"class User {\n  private string _name;       // field (private)\n  public string Name {         // property\n    get => _name;\n    set => _name = value?.Trim() ?? \"\"; // logic allowed!\n  }\n  // Auto-property (compiler generates the field):\n  public int Age { get; set; }\n}"},
+  {topic:"LINQ",diff:"easy",q:"What is the LINQ equivalent of JavaScript's .filter()?",code:"",opts:[".Select()",".Map()",".Where()",".Find()"],ans:2,exp:"<strong>.Where()</strong> is LINQ's filter — it returns elements that match the predicate. .Select() is the map equivalent.",expCode:"var nums = new List<int> { 1,2,3,4,5 };\nvar evens = nums.Where(n => n % 2 == 0); // [2,4]\nvar big   = nums.Where(n => n > 3);      // [4,5]"},
+  {topic:"LINQ",diff:"easy",q:"What is the LINQ equivalent of JavaScript's .map()?",code:"",opts:[".Where()",".Select()",".Map()",".Transform()"],ans:1,exp:"<strong>.Select()</strong> transforms each element — the LINQ equivalent of JS .map(). It returns a new IEnumerable of transformed values.",expCode:"var nums = new List<int> { 1,2,3 };\nvar doubled  = nums.Select(n => n * 2);      // [2,4,6]\nvar asString = nums.Select(n => n.ToString()); // [\"1\",\"2\",\"3\"]"},
+  {topic:"LINQ",diff:"medium",q:"What does FirstOrDefault() do vs First()?",code:"",opts:["They are identical","First() throws if empty; FirstOrDefault() returns null/default instead","FirstOrDefault() throws if empty","First() returns multiple items"],ans:1,exp:"<strong>First()</strong> throws an InvalidOperationException if no element matches. <strong>FirstOrDefault()</strong> returns null (or 0 for int) instead of throwing.",expCode:"var nums = new List<int>();\nvar a = nums.First();          // throws!\nvar b = nums.FirstOrDefault(); // returns 0 (default for int)\n\nvar names = new List<string>();\nvar c = names.FirstOrDefault(); // returns null"},
+  {topic:"LINQ",diff:"hard",q:"What does GroupBy() return?",code:"var groups = people.GroupBy(p => p.City);",opts:["A sorted list","IEnumerable of IGrouping — groups of elements with a key","A dictionary","A flat list of cities"],ans:1,exp:"<strong>GroupBy()</strong> returns an IEnumerable of IGrouping<TKey, TElement>. Each group has a Key and is itself an IEnumerable of matching elements.",expCode:"var people = new[] {\n  new {Name=\"Ana\",City=\"KL\"},\n  new {Name=\"Ben\",City=\"KL\"},\n  new {Name=\"Cara\",City=\"JB\"}\n};\nforeach (var g in people.GroupBy(p => p.City)) {\n  Console.WriteLine($\"{g.Key}: {g.Count()} people\");\n}\n// KL: 2 people\n// JB: 1 people"},
+  {topic:"Async",diff:"easy",q:"What return type should an async method have if it doesn't return a value?",code:"",opts:["void","async","Task","bool"],ans:2,exp:"An async method should return <strong>Task</strong> (not void) when it doesn't return a value. 'async void' is only for event handlers — it can't be awaited and exceptions are harder to handle.",expCode:"async Task DoSomethingAsync() {\n  await Task.Delay(1000);\n  Console.WriteLine(\"Done!\");\n}\n// Called with:\nawait DoSomethingAsync();"},
+  {topic:"Async",diff:"medium",q:"What does ConfigureAwait(false) do?",code:"",opts:["Disables exception handling","Resumes on a thread pool thread, not the original context","Makes the task run on the UI thread","Cancels the task"],ans:1,exp:"<strong>ConfigureAwait(false)</strong> tells the awaiter not to resume on the original synchronisation context (e.g. UI thread). Used in library code to avoid deadlocks and improve performance.",expCode:"// In library code (not UI code):\npublic async Task<string> GetDataAsync() {\n  var result = await httpClient\n    .GetStringAsync(url)\n    .ConfigureAwait(false); // don't capture context\n  return result.ToUpper();\n}"},
+  {topic:"Async",diff:"medium",q:"What is a CancellationToken used for?",code:"",opts:["Cancelling variable assignments","Signalling that an async operation should stop","A type of lock","Timeout configuration"],ans:1,exp:"A <strong>CancellationToken</strong> lets callers signal that an operation should be cancelled. The called code checks the token and throws OperationCanceledException when cancellation is requested.",expCode:"async Task LoadAsync(CancellationToken ct) {\n  for (int i = 0; i < 100; i++) {\n    ct.ThrowIfCancellationRequested();\n    await Task.Delay(100, ct);\n  }\n}\n\nvar cts = new CancellationTokenSource();\nvar task = LoadAsync(cts.Token);\ncts.Cancel(); // signal cancellation"},
+  {topic:"Generics",diff:"medium",q:"What does the where T : class constraint mean?",code:"static T GetItem<T>(List<T> list) where T : class",opts:["T must be a static class","T must be a reference type (not a struct)","T must implement IClass","T must have a default constructor"],ans:1,exp:"<strong>where T : class</strong> constrains the generic type T to reference types only — no structs, no primitives. This allows T to be null.",expCode:"// Other common constraints:\nwhere T : struct        // value types only\nwhere T : new()         // must have parameterless ctor\nwhere T : IComparable   // must implement interface\nwhere T : Animal        // must inherit from Animal"},
+  {topic:"Generics",diff:"hard",q:"What is covariance in C# generics?",code:"IEnumerable<Dog> dogs = new List<Dog>();\nIEnumerable<Animal> animals = dogs;",opts:["Dogs can be cast to Animals","A generic type is covariant if it can accept a more derived type parameter","Making generics nullable","A way to add constraints"],ans:1,exp:"<strong>Covariance</strong> (marked with 'out' on the type parameter) allows a generic interface with a derived type to be assigned to one with a base type. IEnumerable<T> is covariant because it uses 'out T'.",expCode:"// IEnumerable<out T> is covariant:\nIEnumerable<Dog> dogs = new List<Dog>();\nIEnumerable<Animal> animals = dogs; // OK!\n\n// List<T> is NOT covariant:\nList<Dog> dogList = new List<Dog>();\n// List<Animal> aList = dogList; // Compile error!"},
+  {topic:"OOP",diff:"hard",q:"What is the difference between an interface and an abstract class?",code:"",opts:["No difference","Abstract class has state/implementation; interface is a pure contract (mostly)","Interfaces can have constructors","Abstract classes allow multiple inheritance"],ans:1,exp:"<strong>Abstract class</strong>: can have fields, constructors, partial implementation. Single inheritance only. <strong>Interface</strong>: a contract — no fields, no constructor (traditionally). A class can implement multiple interfaces.",expCode:"// A class can implement multiple interfaces:\nclass MyClass : IShape, IComparable, ICloneable { }\n\n// But only inherit one abstract class:\nclass Dog : Animal { } // not: Dog : Animal, Pet"},
+  {topic:"OOP",diff:"medium",q:"What is method overloading?",code:"",opts:["A method that calls itself","Multiple methods with the same name but different parameter lists","Overriding a parent class method","A method with optional parameters"],ans:1,exp:"<strong>Method overloading</strong> allows multiple methods with the same name but different parameters. The compiler picks the right one based on the arguments passed.",expCode:"class Calculator {\n  public int Add(int a, int b) => a + b;\n  public double Add(double a, double b) => a + b;\n  public int Add(int a, int b, int c) => a + b + c;\n}\n\nvar c = new Calculator();\nc.Add(1, 2);       // int version\nc.Add(1.5, 2.5);   // double version\nc.Add(1, 2, 3);    // three-param version"},
+  {topic:"Exceptions",diff:"easy",q:"What happens if an exception is not caught?",code:"",opts:["The program continues","The exception is ignored","The program crashes with an unhandled exception","It's automatically logged"],ans:2,exp:"An uncaught exception propagates up the call stack. If nothing catches it, the program terminates with an <strong>unhandled exception</strong> message.",expCode:"void A() => B();\nvoid B() => C();\nvoid C() => throw new Exception(\"Error\");\n// Calling A() → propagates through B, through A,\n// crashes the program if no try/catch wraps A()"},
+  {topic:"Exceptions",diff:"medium",q:"What is the 'when' keyword used for in catch?",code:"catch (Exception ex) when (ex.Message.Contains(\"timeout\"))",opts:["A filter that only catches matching exceptions","An async catch block","A replacement for finally","A loop inside catch"],ans:0,exp:"The <strong>exception filter (when)</strong> adds a condition to a catch block. The exception is only caught if the condition is true — otherwise it propagates to the next handler.",expCode:"try { /* ... */ }\ncatch (HttpException ex) when (ex.StatusCode == 404) {\n  // Only catches 404 errors\n}\ncatch (HttpException ex) when (ex.StatusCode == 500) {\n  // Only catches 500 errors\n}\ncatch (Exception ex) {\n  // Catches everything else\n}"},
+  {topic:"Exceptions",diff:"easy",q:"What does 'finally' guarantee?",code:"",opts:["The code runs only when an exception is thrown","The code always runs, whether or not an exception occurred","The code runs after return","The code runs in a new thread"],ans:1,exp:"<strong>finally</strong> always runs — whether the try block succeeds, throws, or even returns. Used for cleanup: closing files, releasing database connections.",expCode:"var conn = new SqlConnection(connStr);\ntry {\n  conn.Open();\n  // do work\n}\ncatch (Exception ex) {\n  Console.WriteLine(ex.Message);\n}\nfinally {\n  conn.Close(); // always closes, even if exception\n}"},
+  {topic:"Types",diff:"medium",q:"What is the difference between struct and class in C#?",code:"",opts:["No difference","struct is a value type; class is a reference type","struct has no methods","class is stack-allocated"],ans:1,exp:"<strong>struct</strong> is a value type (stack-allocated, copied on assignment). <strong>class</strong> is a reference type (heap-allocated, assigned by reference). Structs are good for small immutable data.",expCode:"struct Point { public int X, Y; }  // value type\nclass Person { public string Name; } // reference type\n\nvar p1 = new Point { X=1, Y=2 };\nvar p2 = p1;     // COPY — p2 is independent\np2.X = 99;\nConsole.WriteLine(p1.X); // still 1"},
+  {topic:"Types",diff:"hard",q:"What is a record type in C#?",code:"record Person(string Name, int Age);",opts:["A database table type","An immutable reference type with value-based equality","A struct with properties","A sealed class"],ans:1,exp:"<strong>record</strong> (C# 9+) is a reference type with value-based equality, immutable properties, and built-in ToString/Deconstruct. Two records with the same values are considered equal.",expCode:"record Person(string Name, int Age);\n\nvar a = new Person(\"Ahmad\", 25);\nvar b = new Person(\"Ahmad\", 25);\nconsole.log(a == b); // true! (value equality)\n\n// Non-destructive mutation with 'with':\nvar c = a with { Age = 26 }; // new record, Age=26"},
+  {topic:"Collections",diff:"medium",q:"What is the difference between List<T> and IEnumerable<T>?",code:"",opts:["They are identical","List<T> is a concrete class; IEnumerable<T> is an interface with minimum functionality","IEnumerable<T> is always faster","List<T> can't use LINQ"],ans:1,exp:"<strong>IEnumerable<T></strong> is an interface — the minimum contract for 'can be iterated'. <strong>List<T></strong> is a full implementation with Add, Remove, Count, indexer, etc. Prefer IEnumerable<T> in method signatures for flexibility.",expCode:"// Good: accepts List, Array, HashSet, anything iterable\nvoid Print(IEnumerable<string> items) {\n  foreach (var s in items) Console.WriteLine(s);\n}\nPrint(new List<string> { \"a\", \"b\" });  // works\nPrint(new string[] { \"a\", \"b\" });     // works too"},
+  {topic:"Collections",diff:"medium",q:"When should you use Dictionary<K,V> vs List<T>?",code:"",opts:["Always use List","Use Dictionary when you need fast key-based lookup","Dictionary is always faster","Use List for more than 10 items"],ans:1,exp:"Use <strong>Dictionary<K,V></strong> for fast O(1) lookup by key. Use <strong>List<T></strong> for ordered collections accessed by index. Dictionary is a hash map under the hood.",expCode:"var dict = new Dictionary<string, int> {\n  { \"Ahmad\", 25 },\n  { \"Sara\",  30 }\n};\ndict[\"Ahmad\"];        // O(1) lookup\ndict.ContainsKey(\"Sara\"); // O(1)\ndict.TryGetValue(\"Ahmad\", out int age); // safe lookup"},
+  {topic:"Modern C#",diff:"medium",q:"What is pattern matching in C#?",code:"if (obj is string s) { Console.WriteLine(s.Length); }",opts:["A regex operation","Testing a value's shape/type and binding to a variable simultaneously","A way to match database rows","String comparison"],ans:1,exp:"<strong>Pattern matching</strong> combines a type check and variable binding in one expression. 'is string s' checks if obj is a string AND assigns it to s if true.",expCode:"object obj = \"Hello\";\n\n// Type pattern:\nif (obj is string s) Console.WriteLine(s.Length); // 5\n\n// Switch expression with patterns:\nstring desc = obj switch {\n  string s when s.Length > 3 => \"Long string\",\n  string s => \"Short string\",\n  int n    => $\"Number: {n}\",\n  null     => \"null\",\n  _        => \"Other\"\n};"},
+  {topic:"Modern C#",diff:"medium",q:"What are init-only setters?",code:"public string Name { get; init; }",opts:["Properties that can only be set in tests","Properties that can only be set during object creation (constructor or object initializer)","Read-only computed properties","Static-only properties"],ans:1,exp:"<strong>init</strong> (C# 9+) allows setting a property only during object construction — in a constructor or object initializer. After that, it's immutable like get-only.",expCode:"class Person {\n  public string Name { get; init; }\n  public int Age  { get; init; }\n}\n\nvar p = new Person { Name = \"Ahmad\", Age = 25 }; // OK\np.Name = \"Sara\"; // Compile error! (immutable after init)"},
+  {topic:"Modern C#",diff:"hard",q:"What is the difference between IEnumerable<T> and IQueryable<T>?",code:"",opts:["IQueryable is just an interface, no difference","IQueryable translates LINQ to SQL; IEnumerable executes in memory","IEnumerable is only for databases","IQueryable can't use Where()"],ans:1,exp:"<strong>IQueryable<T></strong> translates LINQ expressions to the data source (e.g. SQL queries via Entity Framework). <strong>IEnumerable<T></strong> runs queries in-memory after loading data.",expCode:"// IQueryable — SQL is generated:\nvar q = db.Users.Where(u => u.Age > 18);\n// Generates: SELECT * FROM Users WHERE Age > 18\n\n// IEnumerable — all data loaded first, then filtered in memory:\nIEnumerable<User> all = db.Users.ToList();\nvar filtered = all.Where(u => u.Age > 18); // in memory"},
+  {topic:"OOP",diff:"medium",q:"What is the 'this' keyword in C#?",code:"",opts:["A reference to the static class","A reference to the current instance","A placeholder for null","A type parameter"],ans:1,exp:"<strong>this</strong> refers to the current object instance. Used to disambiguate between fields and parameters with the same name, or to pass the current instance to another method.",expCode:"class User {\n  private string name;\n  public User(string name) {\n    this.name = name; // 'this.name' is the field\n    //     'name' is the constructor parameter\n  }\n}"},
+  {topic:"Generics",diff:"medium",q:"What is the purpose of the 'out' parameter keyword?",code:"bool TryParse(string s, out int result)",opts:["Returns multiple values","Marks a parameter as output-only, assigned inside the method","Makes the parameter optional","Creates a copy"],ans:1,exp:"The <strong>out</strong> keyword marks a parameter that the method must assign. The caller can declare the variable inline. Used for Try* patterns (TryParse, TryGetValue).",expCode:"if (int.TryParse(\"42\", out int number)) {\n  Console.WriteLine(number); // 42\n}\n// Variable declared inline with 'out int'\n// TryParse returns bool; number gets the parsed value"},
+  {topic:"LINQ",diff:"medium",q:"What does .ToList() do in a LINQ chain?",code:"var result = query.Where(x => x > 0).ToList();",opts:["Sorts the results","Forces immediate execution and returns a List<T>","Converts to an array","Caches the results indefinitely"],ans:1,exp:"LINQ is <strong>lazy</strong> — queries are not executed until enumerated. <strong>.ToList()</strong> forces immediate execution and materialises the results into a List<T>.",expCode:"// Lazy — query not yet executed:\nvar q = numbers.Where(n => n > 0);\n\n// Executed now:\nvar list = q.ToList();  // executes the query\nvar arr  = q.ToArray(); // also executes immediately"},
+  {topic:"Modern C#",diff:"easy",q:"What is string interpolation syntax in C#?",code:"",opts:["$\"Hello {name}\"","\"Hello\" + name","String.Format(\"Hello {0}\",name)","@\"Hello name\""],ans:0,exp:"<strong>String interpolation</strong> uses a $ prefix with expressions in curly braces. It's the modern replacement for string.Format and concatenation.",expCode:"var name = \"Ahmad\";\nvar age  = 25;\n// Interpolation:\nvar s1 = $\"Name: {name}, Age: {age}\";\n// Old styles:\nvar s2 = \"Name: \" + name + \", Age: \" + age;\nvar s3 = string.Format(\"Name: {0}, Age: {1}\", name, age);"},
+  {topic:"Types",diff:"medium",q:"What is the 'as' operator in C#?",code:"var dog = animal as Dog;",opts:["Throws if cast fails","Safe cast — returns null if cast fails instead of throwing","Converts to string","Calls ToString()"],ans:1,exp:"The <strong>as</strong> operator attempts a cast and returns null if it fails — no exception. Compare with (Dog)animal which throws InvalidCastException on failure.",expCode:"Animal animal = new Cat();\nDog dog = animal as Dog;   // null (no exception)\nif (dog != null) dog.Bark(); // safe check\n\n// Modern pattern matching equivalent:\nif (animal is Dog d) d.Bark(); // cleaner"},
+  {topic:"OOP",diff:"hard",q:"What is the SOLID principle 'Dependency Inversion'?",code:"",opts:["Classes should depend on concrete implementations","High-level modules should depend on abstractions (interfaces), not concrete classes","Every class should have one responsibility","Avoid using the 'new' keyword"],ans:1,exp:"<strong>Dependency Inversion</strong>: high-level code depends on interfaces, not concrete classes. This makes code testable and swappable — pass a mock in tests, pass the real thing in production.",expCode:"// Bad — tight coupling:\nclass OrderService {\n  private SqlDatabase db = new SqlDatabase(); // concrete!\n}\n\n// Good — depends on abstraction:\nclass OrderService {\n  private readonly IDatabase _db;\n  public OrderService(IDatabase db) => _db = db;\n}"},
+  {topic:"Async",diff:"hard",q:"What causes a deadlock with async code in .NET?",code:"",opts:["Using too many Tasks","Calling .Result or .Wait() on a Task in a synchronization context","Using ConfigureAwait","Creating tasks in a loop"],ans:1,exp:"Calling <strong>.Result</strong> or <strong>.Wait()</strong> on a Task while on a synchronization context (like ASP.NET or WinForms UI thread) causes a deadlock: the context is blocked waiting for the Task, but the Task needs the context to complete.",expCode:"// DEADLOCK in ASP.NET Classic or WinForms:\nasync Task<string> GetDataAsync() {\n  return await httpClient.GetStringAsync(url); // needs context\n}\nvoid BadMethod() {\n  var result = GetDataAsync().Result; // blocks context → deadlock!\n}\n// FIX: await all the way down, or use ConfigureAwait(false)"},
+  {topic:"Collections",diff:"hard",q:"What is the difference between HashSet<T> and List<T>?",code:"",opts:["They are identical","HashSet stores unique values with O(1) lookup; List allows duplicates and O(n) lookup","List is faster","HashSet is ordered"],ans:1,exp:"<strong>HashSet<T></strong> only stores unique values and has O(1) Contains(). <strong>List<T></strong> allows duplicates and has O(n) Contains(). HashSet is ideal for membership testing.",expCode:"var set = new HashSet<int> { 1,2,3 };\nset.Add(3);          // ignored (duplicate)\nset.Contains(2);     // O(1) — very fast!\n\nvar list = new List<int> { 1,2,3 };\nlist.Contains(2);    // O(n) — scans the list"},
+  {topic:"Modern C#",diff:"hard",q:"What is the 'yield return' statement used for?",code:"",opts:["Returning from an async task","Producing values lazily in an iterator method","Returning multiple values from a method","A shorthand for return in properties"],ans:1,exp:"<strong>yield return</strong> creates a lazy iterator — values are generated one at a time, only when needed. The method pauses at each yield and resumes on next iteration.",expCode:"IEnumerable<int> GetEvens(int max) {\n  for (int i = 0; i <= max; i += 2)\n    yield return i; // pause, give value, resume\n}\n\nforeach (var n in GetEvens(10))\n  Console.Write(n + \" \"); // 0 2 4 6 8 10"},
+  {topic:"OOP",diff:"medium",q:"What is the difference between static and instance members?",code:"",opts:["No difference","Static members belong to the type; instance members belong to each object","Static members are faster always","Instance members are always private"],ans:1,exp:"<strong>Static</strong> members belong to the class itself — one copy shared by all instances. <strong>Instance</strong> members belong to each individual object.",expCode:"class Counter {\n  public static int Total = 0;  // shared across all Counters\n  public int Count = 0;          // unique per instance\n  public Counter() { Total++; Count = Total; }\n}\nvar a = new Counter(); // Total=1, a.Count=1\nvar b = new Counter(); // Total=2, b.Count=2\nCounter.Total; // 2"},
+  {topic:"Types",diff:"hard",q:"What is boxing and unboxing?",code:"",opts:["Wrapping objects in generic containers","Converting a value type to object (boxing) and back (unboxing)","A way to copy objects","Null coalescing pattern"],ans:1,exp:"<strong>Boxing</strong> wraps a value type (int, bool) in a heap object. <strong>Unboxing</strong> extracts it back. Both involve heap allocation and can hurt performance in tight loops.",expCode:"int num = 42;\nobject boxed = num;  // boxing: int → heap object\nint unboxed = (int)boxed; // unboxing: object → int\n\n// Hidden boxing (avoid in hot paths):\nvar list = new ArrayList();\nlist.Add(42); // boxes 42!\n// Use List<int> instead — no boxing"},
+  {topic:"LINQ",diff:"medium",q:"What is the difference between deferred and immediate execution in LINQ?",code:"",opts:["They execute at the same time","Deferred queries execute when enumerated; immediate (ToList, Count) execute right away","Immediate is lazy","Deferred requires async"],ans:1,exp:"LINQ queries are <strong>deferred</strong> — defined but not executed until you iterate. Methods like <strong>ToList()</strong>, <strong>Count()</strong>, and <strong>First()</strong> cause immediate execution.",expCode:"var q = numbers.Where(n => n > 0); // defined, not run yet\n// q is IEnumerable<int>\n\nforeach (var n in q) { } // executes now\nq.ToList();              // executes now\nq.Count();               // executes now"},
+  {topic:"Modern C#",diff:"medium",q:"What is a delegate in C#?",code:"",opts:["A method that runs async","A type-safe function pointer","An abstract class","A way to call static methods"],ans:1,exp:"A <strong>delegate</strong> is a type that holds a reference to a method (like a function pointer, but type-safe). Func<> and Action<> are built-in generic delegates.",expCode:"// Define:\ndelegate int MathOp(int a, int b);\n\n// Or use built-in Func:\nFunc<int, int, int> add = (a, b) => a + b;\nAction<string> print = s => Console.WriteLine(s);\n\nadd(3, 4);      // 7\nprint(\"hello\"); // prints hello"},
+  {topic:"Modern C#",diff:"hard",q:"What is the 'using' statement for (not the directive)?",code:"using (var conn = new SqlConnection(str)) { }",opts:["Imports a namespace","Ensures Dispose() is called when the block exits","Async resource management","Creates a using alias"],ans:1,exp:"The <strong>using statement</strong> calls Dispose() on the resource when the block exits — even if an exception is thrown. Works with any IDisposable.",expCode:"// Block form:\nusing (var reader = new StreamReader(path)) {\n  var content = reader.ReadToEnd();\n} // reader.Dispose() called here automatically\n\n// Declaration form (C# 8+):\nusing var reader = new StreamReader(path);\nvar content = reader.ReadToEnd();\n// reader.Dispose() called at end of method"},
+  {topic:"Collections",diff:"easy",q:"How do you add an item to a List<T>?",code:"",opts:[".Add()",".Push()",".Append()",".Insert(0, item)"],ans:0,exp:"<strong>.Add()</strong> appends an item to the end of a List<T>. .Insert(index, item) inserts at a specific position.",expCode:"var list = new List<string>();\nlist.Add(\"first\");        // [\"first\"]\nlist.Add(\"second\");       // [\"first\", \"second\"]\nlist.Insert(0, \"zeroth\"); // [\"zeroth\",\"first\",\"second\"]\nlist.Remove(\"first\");     // removes by value\nlist.RemoveAt(0);         // removes by index"},
+  {topic:"Types",diff:"medium",q:"What is the difference between const and readonly?",code:"",opts:["They are identical","const is compile-time; readonly can be set at runtime in constructors","readonly is faster","const allows null"],ans:1,exp:"<strong>const</strong> must be a compile-time constant (literal value only). <strong>readonly</strong> can be set in constructors and allows complex types — more flexible.",expCode:"class Config {\n  public const double PI = 3.14159;  // compile-time literal\n  public readonly string AppName;    // set in constructor\n\n  public Config(string name) {\n    AppName = name;  // OK for readonly\n    // PI = 3.14;    // Error — const can't be changed\n  }\n}"},
+  {topic:"Exceptions",diff:"hard",q:"What is the difference between throw and throw ex?",code:"",opts:["They are identical","throw preserves the original stack trace; throw ex resets it","throw ex is faster","throw can only be used in catch"],ans:1,exp:"<strong>throw</strong> (bare) rethrows preserving the original stack trace. <strong>throw ex</strong> resets the stack trace to the current location, hiding where the error actually originated.",expCode:"try {\n  RiskyMethod();\n}\ncatch (Exception ex) {\n  Log(ex);\n  throw;     // preserves original trace (correct!)\n  // throw ex; // resets trace — hides origin (bad!)\n}"},
+  {topic:"Modern C#",diff:"medium",q:"What is the null-forgiving operator (!) in C#?",code:"string name = GetName()!;",opts:["Logical NOT","Tells the compiler to trust you that the value is not null","Throws if null","Makes the type nullable"],ans:1,exp:"The <strong>null-forgiving operator !</strong> (postfix) suppresses the nullable warning — you're asserting to the compiler that this value won't be null at runtime. It doesn't add any runtime check.",expCode:"string? name = GetNullableName();\nConsole.WriteLine(name!.Length); // suppresses warning\n// If name IS null at runtime → NullReferenceException\n// Use only when you're CERTAIN it's not null"},
+  {topic:"OOP",diff:"medium",q:"What is encapsulation?",code:"",opts:["Inheriting from multiple classes","Hiding internal details and exposing only what's necessary","Overriding parent methods","Running code asynchronously"],ans:1,exp:"<strong>Encapsulation</strong> is bundling data and the methods that work on it together, while restricting direct access to internal state. Private fields + public properties/methods is the C# pattern.",expCode:"class BankAccount {\n  private decimal _balance;  // hidden\n\n  public decimal Balance => _balance; // read-only exposure\n\n  public void Deposit(decimal amount) {\n    if (amount <= 0) throw new ArgumentException();\n    _balance += amount; // only modified through methods\n  }\n}"},
+  {topic:"LINQ",diff:"hard",q:"What does SelectMany() do?",code:"",opts:["Maps and returns a list of lists","Flattens nested sequences into one sequence","Selects every other item","Joins two lists by key"],ans:1,exp:"<strong>SelectMany()</strong> is like map + flatten — it projects each element to a collection, then flattens all results into a single sequence.",expCode:"var orders = new[] {\n  new { Items = new[] { \"A\", \"B\" } },\n  new { Items = new[] { \"C\" } },\n  new { Items = new[] { \"D\", \"E\" } }\n};\nvar allItems = orders.SelectMany(o => o.Items);\n// [\"A\",\"B\",\"C\",\"D\",\"E\"] — flattened!"},
+  {topic:"Types",diff:"easy",q:"What is the bool type in C#?",code:"",opts:["A number 0 or 1","A true/false value, never implicitly convertible from int","Same as int","An object"],ans:1,exp:"<strong>bool</strong> in C# holds only <strong>true</strong> or <strong>false</strong>. Unlike C/C++, you cannot use integers as booleans in C# — if (1) is a compile error.",expCode:"bool isActive = true;\nbool isValid  = false;\n\n// C# requires explicit bool in conditions:\nif (isActive) { }    // OK\n// if (1) { }        // Compile error!\nif (count > 0) { }   // OK (expression returns bool)"}
+];
+
+let quizState = { lang: 'js', current: 0, answered: false, score: 0, history: [] };
+
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('codedojo') || '{}');
+    if (saved.jsScore !== undefined) quizState.jsScore = saved.jsScore;
+    if (saved.csScore !== undefined) quizState.csScore = saved.csScore;
+    const streak = parseInt(localStorage.getItem('codedojo-streak') || '0');
+    document.getElementById('streak-display').textContent = streak + ' day streak';
+    document.getElementById('home-streak').textContent = streak;
+    const total = (saved.jsScore || 0) + (saved.csScore || 0);
+    document.getElementById('home-score').textContent = total;
+  } catch(e) {}
+}
+
+function saveScore(lang, score) {
+  try {
+    const saved = JSON.parse(localStorage.getItem('codedojo') || '{}');
+    saved[lang + 'Score'] = score;
+    localStorage.setItem('codedojo', JSON.stringify(saved));
+    const today = new Date().toDateString();
+    const lastDay = localStorage.getItem('codedojo-lastday');
+    if (lastDay !== today) {
+      const streak = parseInt(localStorage.getItem('codedojo-streak') || '0');
+      localStorage.setItem('codedojo-streak', streak + 1);
+      localStorage.setItem('codedojo-lastday', today);
+    }
+    loadState();
+  } catch(e) {}
+}
+
+function resetProgress() {
+  if (confirm('Reset all progress?')) {
+    localStorage.removeItem('codedojo');
+    localStorage.removeItem('codedojo-streak');
+    localStorage.removeItem('codedojo-lastday');
+    quizState = { lang: 'js', current: 0, answered: false, score: 0, history: [] };
+    loadState();
+    document.getElementById('quiz-area').innerHTML = '<div style="text-align:center;padding:60px 0;color:var(--text2)">Progress reset. Choose a language to begin.</div>';
+    alert('Progress reset!');
+  }
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const tabMap = { home: 0, js: 1, cs: 2, quiz: 3, ref: 4 };
+  const tabs = document.querySelectorAll('.nav-tab');
+  if (tabs[tabMap[id]]) tabs[tabMap[id]].classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startQuiz(lang) {
+  quizState.lang = lang;
+  quizState.current = 0;
+  quizState.answered = false;
+  quizState.score = 0;
+  quizState.history = [];
+  document.getElementById('qbtn-js').className = 'quiz-lang-btn' + (lang === 'js' ? ' active-js' : '');
+  document.getElementById('qbtn-cs').className = 'quiz-lang-btn' + (lang === 'cs' ? ' active-cs' : '');
+  showPage('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const qs = quizState.lang === 'js' ? jsQuestions : csQuestions;
+  const q = qs[quizState.current];
+  const total = qs.length;
+  const pct = Math.round(quizState.current / total * 100);
+
+  document.getElementById('q-progress-bar').style.width = pct + '%';
+  document.getElementById('q-progress-text').textContent = `Question ${quizState.current + 1} of ${total}`;
+  document.getElementById('q-score-display').textContent = `Score: ${quizState.score}/${quizState.current}`;
+
+  const optsHtml = q.opts.map((o, i) => {
+    const hist = quizState.history[quizState.current];
+    let cls = '';
+    if (hist !== undefined) {
+      if (i === q.ans) cls = 'correct';
+      else if (i === hist && hist !== q.ans) cls = 'wrong';
+    }
+    return `<button class="option-btn ${cls}" onclick="selectAnswer(${i})" ${hist !== undefined ? 'disabled' : ''}>${String.fromCharCode(65+i)}. ${o}</button>`;
+  }).join('');
+
+  const expShow = quizState.history[quizState.current] !== undefined ? 'show' : '';
+  const expCode = q.expCode ? `<div class="exp-code">${q.expCode}</div>` : '';
+
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="question-card">
+      <div class="question-meta">
+        <span class="q-num">#${quizState.current + 1}</span>
+        <span class="q-topic ${quizState.lang}">${q.topic}</span>
+        <span class="q-difficulty ${q.diff}">${q.diff}</span>
+      </div>
+      <div class="question-text">${q.q}</div>
+      ${q.code ? `<div class="question-code"><pre>${q.code}</pre></div>` : ''}
+      <div class="options">${optsHtml}</div>
+      <div class="explanation ${expShow}">
+        <strong>Explanation:</strong> ${q.exp}
+        ${expCode}
+      </div>
+    </div>
+    <div class="quiz-nav">
+      <button class="nav-btn" onclick="prevQ()" ${quizState.current === 0 ? 'disabled' : ''}>← Prev</button>
+      <span class="score-display">${quizState.score} correct</span>
+      ${quizState.current < (quizState.lang === 'js' ? jsQuestions : csQuestions).length - 1
+        ? `<button class="nav-btn primary" onclick="nextQ()">Next →</button>`
+        : `<button class="nav-btn primary" onclick="showResults()">Finish Quiz</button>`}
+    </div>
+  `;
+}
+
+function selectAnswer(i) {
+  if (quizState.history[quizState.current] !== undefined) return;
+  const qs = quizState.lang === 'js' ? jsQuestions : csQuestions;
+  const q = qs[quizState.current];
+  quizState.history[quizState.current] = i;
+  if (i === q.ans) quizState.score++;
+  renderQuestion();
+}
+
+function nextQ() {
+  const qs = quizState.lang === 'js' ? jsQuestions : csQuestions;
+  if (quizState.current < qs.length - 1) { quizState.current++; renderQuestion(); }
+}
+
+function prevQ() {
+  if (quizState.current > 0) { quizState.current--; renderQuestion(); }
+}
+
+function showResults() {
+  const qs = quizState.lang === 'js' ? jsQuestions : csQuestions;
+  const pct = Math.round(quizState.score / qs.length * 100);
+  const color = pct >= 80 ? 'var(--green)' : pct >= 60 ? '#ffb347' : 'var(--red)';
+  const msg = pct >= 80 ? 'Excellent!' : pct >= 60 ? 'Good work!' : 'Keep practising!';
+  saveScore(quizState.lang, quizState.score);
+  document.getElementById('q-progress-bar').style.width = '100%';
+  document.getElementById('q-progress-text').textContent = 'Quiz complete!';
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="results-card">
+      <div class="results-score" style="color:${color}">${quizState.score}<span style="font-size:32px;color:var(--text3)">/${qs.length}</span></div>
+      <div class="results-label">${msg} You scored ${pct}%</div>
+      <div class="results-bars">
+        <div class="results-bar-item"><div class="results-bar-num" style="color:var(--green)">${quizState.score}</div><div class="results-bar-lbl">correct</div></div>
+        <div class="results-bar-item"><div class="results-bar-num" style="color:var(--red)">${qs.length - quizState.score}</div><div class="results-bar-lbl">incorrect</div></div>
+        <div class="results-bar-item"><div class="results-bar-num" style="color:var(--accent)">${pct}%</div><div class="results-bar-lbl">score</div></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="nav-btn primary" onclick="startQuiz('${quizState.lang}')">Retry Same Quiz</button>
+      <button class="nav-btn" onclick="startQuiz('${quizState.lang === 'js' ? 'cs' : 'js'}')">Switch to ${quizState.lang === 'js' ? 'C#' : 'JS'}</button>
+      <button class="nav-btn" onclick="showPage('${quizState.lang}')">Review Lessons</button>
+    </div>
+  `;
+}
+
+function copyCode(btn) {
+  const code = btn.closest('.example-block').querySelector('pre');
+  const text = code.innerText;
+  navigator.clipboard.writeText(text).then(() => { btn.textContent = 'copied!'; setTimeout(() => btn.textContent = 'copy', 1500); });
+}
+
+loadState();
+</script>
+</body>
+</html>
